@@ -2,7 +2,7 @@
 <html lang="zh-CN"><head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>单词消消乐</title>
+  <title>小托福单词辅助游戏</title>
   <style>
     :root {
       --ink: #203040;
@@ -588,8 +588,8 @@
     <section id="gameScreen" class="screen active">
       <div class="topbar">
         <div>
-          <h1>单词消消乐</h1>
-          <p class="subtitle">点击英文，再点击对应中文。答对消除，答错会提示。</p>
+          <h1>小托福单词辅助游戏</h1>
+          <p class="subtitle">每轮10个单词。点击英文，再点击对应中文。答对消除，答错会提示。</p>
         </div>
         <div class="status" aria-live="polite">
           <div class="stat"><span>得分</span><strong id="score">0</strong></div>
@@ -618,11 +618,11 @@
       <div class="board-shell">
         <section class="column">
           <h2 class="column-title">English <span>🔊</span></h2>
-          <div id="englishGrid" class="grid"><button class="tile english " data-id="2-cellar" data-type="english" aria-label="cellar" title="cellar">cellar</button><button class="tile english " data-id="5-mourn" data-type="english" aria-label="mourn" title="mourn">mourn</button><button class="tile english text-long" data-id="14-incorporate" data-type="english" aria-label="incorporate" title="incorporate">incorporate</button><button class="tile english " data-id="16-ruthless" data-type="english" aria-label="ruthless" title="ruthless">ruthless</button><button class="tile english " data-id="17-gay" data-type="english" aria-label="gay" title="gay">gay</button><button class="tile english text-long" data-id="6-preparation" data-type="english" aria-label="preparation" title="preparation">preparation</button><button class="tile english " data-id="3-console" data-type="english" aria-label="console" title="console">console</button><button class="tile english " data-id="11-operate" data-type="english" aria-label="operate" title="operate">operate</button><button class="tile english " data-id="9-accustom" data-type="english" aria-label="accustom" title="accustom">accustom</button><button class="tile english " data-id="0-seek" data-type="english" aria-label="seek" title="seek">seek</button><button class="tile english " data-id="4-giraffe" data-type="english" aria-label="giraffe" title="giraffe">giraffe</button><button class="tile english " data-id="10-tremble" data-type="english" aria-label="tremble" title="tremble">tremble</button><button class="tile english " data-id="1-grateful" data-type="english" aria-label="grateful" title="grateful">grateful</button><button class="tile english " data-id="18-magic" data-type="english" aria-label="magic" title="magic">magic</button><button class="tile english " data-id="13-lamp" data-type="english" aria-label="lamp" title="lamp">lamp</button><button class="tile english " data-id="12-submit" data-type="english" aria-label="submit" title="submit">submit</button><button class="tile english " data-id="15-curd" data-type="english" aria-label="curd" title="curd">curd</button><button class="tile english " data-id="19-advise" data-type="english" aria-label="advise" title="advise">advise</button><button class="tile english " data-id="8-cookbook" data-type="english" aria-label="cookbook" title="cookbook">cookbook</button><button class="tile english " data-id="7-contest" data-type="english" aria-label="contest" title="contest">contest</button></div>
+          <div id="englishGrid" class="grid"></div>
         </section>
         <section class="column">
           <h2 class="column-title">中文 <span>✓</span></h2>
-          <div id="chineseGrid" class="grid"><button class="tile chinese text-long" data-id="19-advise" data-type="chinese" aria-label="劝告；提建议" title="劝告；提建议">劝告；提建议</button><button class="tile chinese " data-id="14-incorporate" data-type="chinese" aria-label="包含；合并，使并入" title="包含；合并，使并入">包含；合并</button><button class="tile chinese " data-id="9-accustom" data-type="chinese" aria-label="使习惯于" title="使习惯于">使习惯于</button><button class="tile chinese " data-id="18-magic" data-type="chinese" aria-label="魔法，法术；巫术 魔法的" title="魔法，法术；巫术 魔法的">魔法；法术</button><button class="tile chinese " data-id="12-submit" data-type="chinese" aria-label="服从，顺从；提交" title="服从，顺从；提交">服从；顺从</button><button class="tile chinese text-xlong" data-id="17-gay" data-type="chinese" aria-label="快乐的，欢快的 同性恋" title="快乐的，欢快的 同性恋">快乐的；欢快的同性恋</button><button class="tile chinese text-long" data-id="11-operate" data-type="chinese" aria-label="使运转；操作 运转；做手术" title="使运转；操作 运转；做手术">使运转；操作运转</button><button class="tile chinese text-long" data-id="2-cellar" data-type="chinese" aria-label="地下室，地窖" title="地下室，地窖">地下室；地窖</button><button class="tile chinese " data-id="8-cookbook" data-type="chinese" aria-label="食谱，菜谱，烹饪书" title="食谱，菜谱，烹饪书">食谱；菜谱</button><button class="tile chinese " data-id="13-lamp" data-type="chinese" aria-label="灯" title="灯">灯</button><button class="tile chinese " data-id="0-seek" data-type="chinese" aria-label="寻找，追求" title="寻找，追求">寻找；追求</button><button class="tile chinese text-xlong" data-id="3-console" data-type="chinese" aria-label="安慰，慰问n.（电子或机械装置的）控制台，操纵台" title="安慰，慰问n.（电子或机械装置的）控制台，操纵台">安慰；慰问n.（电子或机</button><button class="tile chinese " data-id="4-giraffe" data-type="chinese" aria-label="长颈鹿" title="长颈鹿">长颈鹿</button><button class="tile chinese text-xlong" data-id="15-curd" data-type="chinese" aria-label="凝乳（牛奶发酵形成的稠而软的物质，可制奶酪）" title="凝乳（牛奶发酵形成的稠而软的物质，可制奶酪）">凝乳（牛奶发酵形成的稠而</button><button class="tile chinese " data-id="10-tremble" data-type="chinese" aria-label="发抖，哆嗦，打颤" title="发抖，哆嗦，打颤">发抖；哆嗦</button><button class="tile chinese text-xlong" data-id="5-mourn" data-type="chinese" aria-label="为…哀痛；向…致哀vi. 哀悼" title="为…哀痛；向…致哀vi. 哀悼">为…哀痛；向…致哀vi.</button><button class="tile chinese " data-id="7-contest" data-type="chinese" aria-label="比赛，竞赛" title="比赛，竞赛">比赛；竞赛</button><button class="tile chinese " data-id="6-preparation" data-type="chinese" aria-label="准备，预备" title="准备，预备">准备；预备</button><button class="tile chinese text-long" data-id="1-grateful" data-type="chinese" aria-label="感激的，感谢的" title="感激的，感谢的">感激的；感谢的</button><button class="tile chinese text-long" data-id="16-ruthless" data-type="chinese" aria-label="无情的，冷酷的；残忍的" title="无情的，冷酷的；残忍的">无情的；冷酷的</button></div>
+          <div id="chineseGrid" class="grid"></div>
         </section>
       </div>
     </section>
@@ -688,27 +688,27 @@
     const defaultWords = [
       {
             "english": "grow",
-            "chinese": "发展；生长；增加，增长；渐渐变得 使生长；种植",
+            "chinese": "发展",
             "example": ""
       },
       {
             "english": "theoretical",
-            "chinese": "理论的，理论上的",
+            "chinese": "理论的",
             "example": ""
       },
       {
             "english": "dominant",
-            "chinese": "【生】显性的；占优势的；支配的，统治的 显性性状",
+            "chinese": "【生】显性的",
             "example": ""
       },
       {
             "english": "valid",
-            "chinese": "（法律上）有效的，正当的",
+            "chinese": "有效的",
             "example": ""
       },
       {
             "english": "clerk",
-            "chinese": "办事员；职员；店员",
+            "chinese": "办事员",
             "example": ""
       },
       {
@@ -718,27 +718,27 @@
       },
       {
             "english": "praise",
-            "chinese": "赞扬，称赞",
+            "chinese": "赞扬",
             "example": ""
       },
       {
             "english": "grandmother",
-            "chinese": "祖母；外祖母",
+            "chinese": "祖母",
             "example": ""
       },
       {
             "english": "absolute",
-            "chinese": "绝对的，完全的",
+            "chinese": "绝对的",
             "example": ""
       },
       {
             "english": "tremble",
-            "chinese": "发抖，哆嗦，打颤",
+            "chinese": "发抖",
             "example": ""
       },
       {
             "english": "preparation",
-            "chinese": "准备，预备",
+            "chinese": "准备",
             "example": ""
       },
       {
@@ -748,7 +748,7 @@
       },
       {
             "english": "allowance",
-            "chinese": "允许；津贴，补助",
+            "chinese": "允许",
             "example": ""
       },
       {
@@ -758,12 +758,12 @@
       },
       {
             "english": "hand",
-            "chinese": "手；手艺；指针；从事体力劳动的劳工 传递，交给",
+            "chinese": "手",
             "example": ""
       },
       {
             "english": "magic",
-            "chinese": "魔法，法术；巫术 魔法的",
+            "chinese": "魔法",
             "example": ""
       },
       {
@@ -773,22 +773,22 @@
       },
       {
             "english": "comrade",
-            "chinese": "同志；亲密的伙伴",
+            "chinese": "同志",
             "example": ""
       },
       {
             "english": "console",
-            "chinese": "安慰，慰问n.（电子或机械装置的）控制台，操纵台",
+            "chinese": "安慰",
             "example": ""
       },
       {
             "english": "dominate",
-            "chinese": "控制；（在…中）占首要地位",
+            "chinese": "控制",
             "example": ""
       },
       {
             "english": "dictation",
-            "chinese": "口授；听写",
+            "chinese": "口授",
             "example": ""
       },
       {
@@ -808,12 +808,12 @@
       },
       {
             "english": "supply",
-            "chinese": "供给，供应",
+            "chinese": "供给",
             "example": ""
       },
       {
             "english": "adapt",
-            "chinese": "（使）适应，（使）适合；改编，改写",
+            "chinese": "适应",
             "example": ""
       },
       {
@@ -823,37 +823,37 @@
       },
       {
             "english": "allow",
-            "chinese": "允许，许可",
+            "chinese": "允许",
             "example": ""
       },
       {
             "english": "digital",
-            "chinese": "数字式的，数码的",
+            "chinese": "数字式的",
             "example": ""
       },
       {
             "english": "incredible",
-            "chinese": "不可思议的；惊人的；难以置信的",
+            "chinese": "不可思议的",
             "example": ""
       },
       {
             "english": "terrestrial",
-            "chinese": "陆地的；陆栖的",
+            "chinese": "陆地的",
             "example": ""
       },
       {
             "english": "deluge",
-            "chinese": "洪水；倾盆大雨",
+            "chinese": "洪水",
             "example": ""
       },
       {
             "english": "quilt",
-            "chinese": "被子；褥子；被褥",
+            "chinese": "被子",
             "example": ""
       },
       {
             "english": "express",
-            "chinese": "表达，表示",
+            "chinese": "表达",
             "example": ""
       },
       {
@@ -863,37 +863,37 @@
       },
       {
             "english": "dozen",
-            "chinese": "一打，十二个",
+            "chinese": "一打",
             "example": ""
       },
       {
             "english": "commence",
-            "chinese": "开始；着手；获得学位",
+            "chinese": "开始",
             "example": ""
       },
       {
             "english": "iron",
-            "chinese": "铁；熨斗 熨平",
+            "chinese": "铁",
             "example": ""
       },
       {
             "english": "loathe",
-            "chinese": "憎恨，厌恶",
+            "chinese": "憎恨",
             "example": ""
       },
       {
             "english": "flu",
-            "chinese": "（influenza的简写）流感",
+            "chinese": "流感",
             "example": ""
       },
       {
             "english": "barbecue",
-            "chinese": "（常用于室外的）金属烤架；烧烤野餐vt.（通常在户外）在烤架上烧烤 烧烤，烤 肉",
+            "chinese": "金属烤架",
             "example": ""
       },
       {
             "english": "fear",
-            "chinese": "惧怕，害怕",
+            "chinese": "惧怕",
             "example": ""
       },
       {
@@ -903,7 +903,7 @@
       },
       {
             "english": "marine",
-            "chinese": "海的；海产的；海军的；海事的",
+            "chinese": "海的",
             "example": ""
       },
       {
@@ -913,47 +913,47 @@
       },
       {
             "english": "appetite",
-            "chinese": "欲望；胃口，食欲",
+            "chinese": "欲望",
             "example": ""
       },
       {
             "english": "narwhal",
-            "chinese": "角鲸，独角鲸",
+            "chinese": "角鲸",
             "example": ""
       },
       {
             "english": "observe",
-            "chinese": "观察，研究 看到，注意到",
+            "chinese": "观察",
             "example": ""
       },
       {
             "english": "giant",
-            "chinese": "巨人 巨大的，特大的",
+            "chinese": "巨人 巨大的",
             "example": ""
       },
       {
             "english": "clue",
-            "chinese": "线索；（故事等的）情节 为…提供线索；为…提供情况 They happened on a clue to the mystery.",
+            "chinese": "线索",
             "example": ""
       },
       {
             "english": "otherwise",
-            "chinese": "不同地；在其他方面，除此以外 否则；要不然",
+            "chinese": "不同地",
             "example": ""
       },
       {
             "english": "ingredient",
-            "chinese": "（烹调用的）原料，材料，成分",
+            "chinese": "原料",
             "example": ""
       },
       {
             "english": "geometry",
-            "chinese": "几何，几何学",
+            "chinese": "几何",
             "example": ""
       },
       {
             "english": "cruel",
-            "chinese": "残酷的，残忍的",
+            "chinese": "残酷的",
             "example": ""
       },
       {
@@ -963,47 +963,47 @@
       },
       {
             "english": "donate",
-            "chinese": "捐赠；捐献",
+            "chinese": "捐赠",
             "example": ""
       },
       {
             "english": "whereas",
-            "chinese": "但是，相反",
+            "chinese": "但是",
             "example": ""
       },
       {
             "english": "filling",
-            "chinese": "装满，填满；填充物；（糕点内的）馅",
+            "chinese": "装满",
             "example": ""
       },
       {
             "english": "energetic",
-            "chinese": "精力充沛的，充满活力的",
+            "chinese": "精力充沛的",
             "example": ""
       },
       {
             "english": "imply",
-            "chinese": "暗示，暗指",
+            "chinese": "暗示",
             "example": ""
       },
       {
             "english": "mourn",
-            "chinese": "为…哀痛；向…致哀vi. 哀悼",
+            "chinese": "为…哀痛",
             "example": ""
       },
       {
             "english": "agency",
-            "chinese": "经销处；代理行，代理机构",
+            "chinese": "经销处",
             "example": ""
       },
       {
             "english": "raw",
-            "chinese": "生的；天然的，未经过加工的",
+            "chinese": "生的",
             "example": ""
       },
       {
             "english": "bedclothes",
-            "chinese": "铺盖，床单被褥类",
+            "chinese": "铺盖",
             "example": ""
       },
       {
@@ -1013,7 +1013,7 @@
       },
       {
             "english": "throughout",
-            "chinese": "遍及，遍布；贯穿",
+            "chinese": "遍及",
             "example": ""
       },
       {
@@ -1023,27 +1023,27 @@
       },
       {
             "english": "deliver",
-            "chinese": "递送 授（课）；讲（话）",
+            "chinese": "递送 授（课）",
             "example": ""
       },
       {
             "english": "resent",
-            "chinese": "对…感到愤怒；怨恨；厌恶",
+            "chinese": "对…感到愤怒",
             "example": ""
       },
       {
             "english": "catalogue",
-            "chinese": "（图书、商品等的）目录，一览表",
+            "chinese": "目录",
             "example": ""
       },
       {
             "english": "contest",
-            "chinese": "比赛，竞赛",
+            "chinese": "比赛",
             "example": ""
       },
       {
             "english": "plumber",
-            "chinese": "管子工，水暖工",
+            "chinese": "管子工",
             "example": ""
       },
       {
@@ -1058,7 +1058,7 @@
       },
       {
             "english": "proper",
-            "chinese": "恰当的，适当的",
+            "chinese": "恰当的",
             "example": ""
       },
       {
@@ -1068,67 +1068,67 @@
       },
       {
             "english": "religion",
-            "chinese": "宗教，宗教信仰",
+            "chinese": "宗教",
             "example": ""
       },
       {
             "english": "transportation",
-            "chinese": "交通；运输",
+            "chinese": "交通",
             "example": ""
       },
       {
             "english": "curd",
-            "chinese": "凝乳（牛奶发酵形成的稠而软的物质，可制奶酪）",
+            "chinese": "凝乳（牛奶发酵形成的稠而",
             "example": ""
       },
       {
             "english": "farm",
-            "chinese": "农场；农家；畜牧场 养殖；耕种",
+            "chinese": "农场",
             "example": ""
       },
       {
             "english": "arch",
-            "chinese": "拱，拱门",
+            "chinese": "拱",
             "example": ""
       },
       {
             "english": "operate",
-            "chinese": "使运转；操作 运转；做手术",
+            "chinese": "使运转",
             "example": ""
       },
       {
             "english": "spear",
-            "chinese": "矛，鱼叉",
+            "chinese": "矛",
             "example": ""
       },
       {
             "english": "handy",
-            "chinese": "方便的；手边的，附近的",
+            "chinese": "方便的",
             "example": ""
       },
       {
             "english": "recognize",
-            "chinese": "识别，认出",
+            "chinese": "识别",
             "example": ""
       },
       {
             "english": "absurd",
-            "chinese": "荒谬的，荒唐的",
+            "chinese": "荒谬的",
             "example": ""
       },
       {
             "english": "severe",
-            "chinese": "严峻的；严重的；严厉的，苛刻的",
+            "chinese": "严峻的",
             "example": ""
       },
       {
             "english": "compensate",
-            "chinese": "补偿，弥补",
+            "chinese": "补偿",
             "example": ""
       },
       {
             "english": "cellar",
-            "chinese": "地下室，地窖",
+            "chinese": "地下室",
             "example": ""
       },
       {
@@ -1138,52 +1138,52 @@
       },
       {
             "english": "hippo",
-            "chinese": "（hippopotamus 的简写形式）河马",
+            "chinese": "河马",
             "example": ""
       },
       {
             "english": "passer-by",
-            "chinese": "过路人，经过者",
+            "chinese": "过路人",
             "example": ""
       },
       {
             "english": "nursery",
-            "chinese": "托儿所；育儿室",
+            "chinese": "托儿所",
             "example": ""
       },
       {
             "english": "admire",
-            "chinese": "赞赏；钦佩",
+            "chinese": "赞赏",
             "example": ""
       },
       {
             "english": "indeed",
-            "chinese": "的确，确实",
+            "chinese": "的确",
             "example": ""
       },
       {
             "english": "chain",
-            "chinese": "链，锁链；连锁店",
+            "chinese": "链",
             "example": ""
       },
       {
             "english": "fit",
-            "chinese": "安装；使合身 健康的；合适的",
+            "chinese": "安装",
             "example": ""
       },
       {
             "english": "family",
-            "chinese": "家庭；家族；家属；子女；亲属 家庭的；家族的",
+            "chinese": "家庭",
             "example": ""
       },
       {
             "english": "hug",
-            "chinese": "紧抱，热烈拥抱",
+            "chinese": "紧抱",
             "example": ""
       },
       {
             "english": "case",
-            "chinese": "事例，实例；情况；病例",
+            "chinese": "事例",
             "example": ""
       },
       {
@@ -1193,7 +1193,7 @@
       },
       {
             "english": "interval",
-            "chinese": "（时间或空间）间隔",
+            "chinese": "间隔",
             "example": ""
       },
       {
@@ -1203,37 +1203,37 @@
       },
       {
             "english": "key",
-            "chinese": "钥匙；键；答案",
+            "chinese": "钥匙",
             "example": ""
       },
       {
             "english": "spectator",
-            "chinese": "观众；旁观者",
+            "chinese": "观众",
             "example": ""
       },
       {
             "english": "apply",
-            "chinese": "应用；申请，请求",
+            "chinese": "应用",
             "example": ""
       },
       {
             "english": "ruthless",
-            "chinese": "无情的，冷酷的；残忍的",
+            "chinese": "无情的",
             "example": ""
       },
       {
             "english": "hind",
-            "chinese": "（常指动物腿）后面的，在后的",
+            "chinese": "后面的",
             "example": ""
       },
       {
             "english": "fish",
-            "chinese": "捕鱼，钓鱼 用钩捞取 鱼，鱼类",
+            "chinese": "捕鱼",
             "example": ""
       },
       {
             "english": "purse",
-            "chinese": "（女式）钱包；（女用）手提包",
+            "chinese": "钱包",
             "example": ""
       },
       {
@@ -1248,42 +1248,42 @@
       },
       {
             "english": "portion",
-            "chinese": "部分；一份 按份儿分配给",
+            "chinese": "部分",
             "example": ""
       },
       {
             "english": "amount",
-            "chinese": "量，数量，数额",
+            "chinese": "量",
             "example": ""
       },
       {
             "english": "steward",
-            "chinese": "（飞机、轮船或火车上的）男服务员",
+            "chinese": "男服务员",
             "example": ""
       },
       {
             "english": "backyard",
-            "chinese": "后院；后花园",
+            "chinese": "后院",
             "example": ""
       },
       {
             "english": "consistent",
-            "chinese": "前后一致的，始终如一的",
+            "chinese": "前后一致的",
             "example": ""
       },
       {
             "english": "exaggerate",
-            "chinese": "使扩大；使增加；夸大，夸张",
+            "chinese": "使扩大",
             "example": ""
       },
       {
             "english": "defect",
-            "chinese": "瑕疵，毛病；欠缺，缺点",
+            "chinese": "瑕疵",
             "example": ""
       },
       {
             "english": "astonish",
-            "chinese": "使惊讶，使大为吃惊",
+            "chinese": "使惊讶",
             "example": ""
       },
       {
@@ -1293,42 +1293,42 @@
       },
       {
             "english": "flight",
-            "chinese": "航班，班机；飞行",
+            "chinese": "航班",
             "example": ""
       },
       {
             "english": "trial",
-            "chinese": "审讯，审判",
+            "chinese": "审讯",
             "example": ""
       },
       {
             "english": "rank",
-            "chinese": "将…分类；将…分等级 位列；名列 等级；社会地位",
+            "chinese": "将…分类",
             "example": ""
       },
       {
             "english": "biased",
-            "chinese": "有偏见的；结果有偏倚的",
+            "chinese": "有偏见的",
             "example": ""
       },
       {
             "english": "copper",
-            "chinese": "铜；铜币adj. 铜制的vt. 镀铜于",
+            "chinese": "铜",
             "example": ""
       },
       {
             "english": "submit",
-            "chinese": "服从，顺从；提交",
+            "chinese": "服从",
             "example": ""
       },
       {
             "english": "especially",
-            "chinese": "尤其，特别",
+            "chinese": "尤其",
             "example": ""
       },
       {
             "english": "engage",
-            "chinese": "使从事（某种工作、事业等）；使参与；与…交战；使订婚 从事",
+            "chinese": "使从事（某种工作",
             "example": ""
       },
       {
@@ -1338,7 +1338,7 @@
       },
       {
             "english": "contradict",
-            "chinese": "与…发生矛盾，与…抵触",
+            "chinese": "与…发生矛盾",
             "example": ""
       },
       {
@@ -1348,27 +1348,27 @@
       },
       {
             "english": "primary",
-            "chinese": "主要的；初级的，基本的",
+            "chinese": "主要的",
             "example": ""
       },
       {
             "english": "victim",
-            "chinese": "牺牲者，受害者",
+            "chinese": "牺牲者",
             "example": ""
       },
       {
             "english": "practical",
-            "chinese": "实际的；实用性的",
+            "chinese": "实际的",
             "example": ""
       },
       {
             "english": "catastrophe",
-            "chinese": "灾祸，灾难",
+            "chinese": "灾祸",
             "example": ""
       },
       {
             "english": "disturb",
-            "chinese": "打扰，妨碍",
+            "chinese": "打扰",
             "example": ""
       },
       {
@@ -1378,22 +1378,22 @@
       },
       {
             "english": "deteriorate",
-            "chinese": "恶化，变坏",
+            "chinese": "恶化",
             "example": ""
       },
       {
             "english": "annoy",
-            "chinese": "打扰，干扰；使烦恼，使恼怒",
+            "chinese": "打扰",
             "example": ""
       },
       {
             "english": "confused",
-            "chinese": "糊涂的，困惑的",
+            "chinese": "糊涂的",
             "example": ""
       },
       {
             "english": "seek",
-            "chinese": "寻找，追求",
+            "chinese": "寻找",
             "example": ""
       },
       {
@@ -1403,12 +1403,12 @@
       },
       {
             "english": "oral",
-            "chinese": "口头的；口述的",
+            "chinese": "口头的",
             "example": ""
       },
       {
             "english": "photograph",
-            "chinese": "（=photo）相片",
+            "chinese": "相片",
             "example": ""
       },
       {
@@ -1418,7 +1418,7 @@
       },
       {
             "english": "alert",
-            "chinese": "警觉的，警惕的；注意的 使警觉；向…报警",
+            "chinese": "警觉的",
             "example": ""
       },
       {
@@ -1428,7 +1428,7 @@
       },
       {
             "english": "providence",
-            "chinese": "天意，天佑",
+            "chinese": "天意",
             "example": ""
       },
       {
@@ -1443,27 +1443,27 @@
       },
       {
             "english": "degree",
-            "chinese": "度，度数；程度；学位",
+            "chinese": "度",
             "example": ""
       },
       {
             "english": "fridge",
-            "chinese": "（refrigerator的简写）冰箱",
+            "chinese": "冰箱",
             "example": ""
       },
       {
             "english": "owe",
-            "chinese": "欠（债）；（应把…）归功于",
+            "chinese": "欠（债）",
             "example": ""
       },
       {
             "english": "relate",
-            "chinese": "和…有关；把…联系起来",
+            "chinese": "和…有关",
             "example": ""
       },
       {
             "english": "tight",
-            "chinese": "（捆、绑、贴）紧的；不松动的；紧密的",
+            "chinese": "紧的",
             "example": ""
       },
       {
@@ -1473,7 +1473,7 @@
       },
       {
             "english": "bury",
-            "chinese": "埋葬，掩埋",
+            "chinese": "埋葬",
             "example": ""
       },
       {
@@ -1483,17 +1483,17 @@
       },
       {
             "english": "preview",
-            "chinese": "预览；（电影、戏剧等）试映，预演；事先查看；预习",
+            "chinese": "预览",
             "example": ""
       },
       {
             "english": "babble",
-            "chinese": "喋喋不休；牙牙学语vt. 含糊不清地说；泄露（秘密）胡言乱语；含糊不清的话",
+            "chinese": "喋喋不休",
             "example": ""
       },
       {
             "english": "facial",
-            "chinese": "面孔的；用于面部的",
+            "chinese": "面孔的",
             "example": ""
       },
       {
@@ -1503,12 +1503,12 @@
       },
       {
             "english": "custom",
-            "chinese": "习惯；风俗 定制的，定做的",
+            "chinese": "习惯",
             "example": ""
       },
       {
             "english": "advise",
-            "chinese": "劝告；提建议",
+            "chinese": "劝告",
             "example": ""
       },
       {
@@ -1523,17 +1523,17 @@
       },
       {
             "english": "incorporate",
-            "chinese": "包含；合并，使并入",
+            "chinese": "包含",
             "example": ""
       },
       {
             "english": "grateful",
-            "chinese": "感激的，感谢的",
+            "chinese": "感激的",
             "example": ""
       },
       {
             "english": "picky",
-            "chinese": "吹毛求疵的，挑剔的；过分讲究的",
+            "chinese": "吹毛求疵的",
             "example": ""
       },
       {
@@ -1543,32 +1543,32 @@
       },
       {
             "english": "greedy",
-            "chinese": "贪婪的，贪心的",
+            "chinese": "贪婪的",
             "example": ""
       },
       {
             "english": "classical",
-            "chinese": "经典的，古典的",
+            "chinese": "经典的",
             "example": ""
       },
       {
             "english": "cabbage",
-            "chinese": "洋白菜，卷心菜",
+            "chinese": "洋白菜",
             "example": ""
       },
       {
             "english": "toast",
-            "chinese": "烤面包，吐司；祝酒辞 烤（面包）；向…祝酒",
+            "chinese": "烤面包",
             "example": ""
       },
       {
             "english": "decree",
-            "chinese": "法令；命令 命令；颁布…为法令；裁决vi. 发布命令；颁布法令",
+            "chinese": "法令",
             "example": ""
       },
       {
             "english": "poison",
-            "chinese": "毒药；有毒物质",
+            "chinese": "毒药",
             "example": ""
       },
       {
@@ -1578,52 +1578,52 @@
       },
       {
             "english": "mask",
-            "chinese": "面具，面罩",
+            "chinese": "面具",
             "example": ""
       },
       {
             "english": "reform",
-            "chinese": "改革；改良；改善",
+            "chinese": "改革",
             "example": ""
       },
       {
             "english": "bleach",
-            "chinese": "漂白；漂白剂 漂白；使褪色",
+            "chinese": "漂白",
             "example": ""
       },
       {
             "english": "preserve",
-            "chinese": "保存；保护",
+            "chinese": "保存",
             "example": ""
       },
       {
             "english": "rhythm",
-            "chinese": "节奏，韵律",
+            "chinese": "节奏",
             "example": ""
       },
       {
             "english": "bound",
-            "chinese": "给…划界；限制；一定的，必定的",
+            "chinese": "给…划界",
             "example": ""
       },
       {
             "english": "edge",
-            "chinese": "边，边缘",
+            "chinese": "边",
             "example": ""
       },
       {
             "english": "opponent",
-            "chinese": "对手；敌手；反对者adj. 对立的；敌对的",
+            "chinese": "对手",
             "example": ""
       },
       {
             "english": "bounce",
-            "chinese": "（使）弹起，（使）弹跳",
+            "chinese": "弹起",
             "example": ""
       },
       {
             "english": "greed",
-            "chinese": "贪婪，贪心",
+            "chinese": "贪婪",
             "example": ""
       },
       {
@@ -1633,12 +1633,12 @@
       },
       {
             "english": "college",
-            "chinese": "大学，学院；高等专科学校",
+            "chinese": "大学",
             "example": ""
       },
       {
             "english": "cookbook",
-            "chinese": "食谱，菜谱，烹饪书",
+            "chinese": "食谱",
             "example": ""
       },
       {
@@ -1648,12 +1648,12 @@
       },
       {
             "english": "boom",
-            "chinese": "激增，猛涨；（经济等）繁荣，迅速发展；发出隆隆声",
+            "chinese": "激增",
             "example": ""
       },
       {
             "english": "barely",
-            "chinese": "仅仅，只不过；几乎不；刚刚",
+            "chinese": "仅仅",
             "example": ""
       },
       {
@@ -1663,22 +1663,22 @@
       },
       {
             "english": "gay",
-            "chinese": "快乐的，欢快的 同性恋",
+            "chinese": "快乐的",
             "example": ""
       },
       {
             "english": "commercial",
-            "chinese": "商业的，商务的 商业广告",
+            "chinese": "商业的",
             "example": ""
       },
       {
             "english": "concrete",
-            "chinese": "具体的，明确的",
+            "chinese": "具体的",
             "example": ""
       },
       {
             "english": "dial",
-            "chinese": "打电话给；拨（电话号码）",
+            "chinese": "打电话给",
             "example": ""
       },
       {
@@ -1689,7 +1689,7 @@
 ];
 
     const FORCE_EMBEDDED_WORDS = true;
-    const ROUND_SIZE = 20;
+    const ROUND_SIZE = 10;
     const PDF_JS_URL = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js";
     const PDF_WORKER_URL = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
 
@@ -1797,7 +1797,7 @@
       const link = document.createElement("a");
       const date = new Date().toISOString().slice(0, 10);
       link.href = URL.createObjectURL(blob);
-      link.download = `单词消消乐-内置${words.length}词-${date}.html`;
+      link.download = `小托福单词辅助游戏-内置${words.length}词-${date}.html`;
       document.body.appendChild(link);
       link.click();
       link.remove();
@@ -1897,7 +1897,7 @@
           .trim()
         )
         .filter(Boolean);
-      return (parts.length ? parts.slice(0, 2).join("；") : cleaned).slice(0, 12);
+      return (parts.length ? parts[0] : cleaned).slice(0, 12);
     }
 
     function textLengthScore(text) {
@@ -1961,9 +1961,15 @@
     }
 
     function handleTileClick(event) {
-      const tile = event.target.closest(".tile");
+      let tile = event.target.closest(".tile");
       if (!tile || tile.classList.contains("matched")) return;
-      if (!state.started) startGame(false);
+      if (!state.started) {
+        const clickedId = tile.dataset.id;
+        const clickedType = tile.dataset.type;
+        startGame(false);
+        tile = document.querySelector(`.tile[data-id="${CSS.escape(clickedId)}"][data-type="${CSS.escape(clickedType)}"]`);
+        if (!tile || tile.classList.contains("matched")) return;
+      }
 
       const word = state.words.find(item => item.id === tile.dataset.id);
       if (!word) return;
