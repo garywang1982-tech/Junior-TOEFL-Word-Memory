@@ -688,7 +688,7 @@
     const defaultWords = [
       {
             "english": "infinity",
-            "chinese": "【数】 无穷大",
+            "chinese": "无穷大",
             "example": ""
       },
       {
@@ -788,7 +788,7 @@
       },
       {
             "english": "sow",
-            "chinese": "播（种）",
+            "chinese": "播",
             "example": ""
       },
       {
@@ -833,7 +833,7 @@
       },
       {
             "english": "permanent",
-            "chinese": "永久（性）的",
+            "chinese": "永久的",
             "example": ""
       },
       {
@@ -973,7 +973,7 @@
       },
       {
             "english": "royal",
-            "chinese": "王室成员 王室的",
+            "chinese": "王室成员王室的",
             "example": ""
       },
       {
@@ -1028,7 +1028,7 @@
       },
       {
             "english": "switch",
-            "chinese": "开关 转换",
+            "chinese": "开关转换",
             "example": ""
       },
       {
@@ -1248,7 +1248,7 @@
       },
       {
             "english": "locate",
-            "chinese": "找出（人或事物的）地点或",
+            "chinese": "找出地点或",
             "example": ""
       },
       {
@@ -1268,7 +1268,7 @@
       },
       {
             "english": "control",
-            "chinese": "& 控制",
+            "chinese": "&控制",
             "example": ""
       },
       {
@@ -1283,7 +1283,7 @@
       },
       {
             "english": "wonder",
-            "chinese": "想知道 惊奇",
+            "chinese": "想知道惊奇",
             "example": ""
       },
       {
@@ -1298,7 +1298,7 @@
       },
       {
             "english": "prune",
-            "chinese": "修剪（树木等）",
+            "chinese": "修剪",
             "example": ""
       },
       {
@@ -1423,7 +1423,7 @@
       },
       {
             "english": "whistle",
-            "chinese": "吹哨 用口哨吹出（…曲调",
+            "chinese": "吹哨用口哨吹出（…曲调",
             "example": ""
       },
       {
@@ -1543,7 +1543,7 @@
       },
       {
             "english": "cousin",
-            "chinese": "堂（或表）兄弟",
+            "chinese": "堂兄弟",
             "example": ""
       },
       {
@@ -1648,12 +1648,12 @@
       },
       {
             "english": "cave",
-            "chinese": "洞穴 挖洞",
+            "chinese": "洞穴挖洞",
             "example": ""
       },
       {
             "english": "chemical",
-            "chinese": "化学的 化学药品",
+            "chinese": "化学的化学药品",
             "example": ""
       },
       {
@@ -1858,6 +1858,9 @@
     }
 
     function renderBoard() {
+      els.wrongFeedback.classList.remove("show");
+      state.selectedEnglish = null;
+      state.selectedChinese = null;
       const englishWords = shuffle(state.words);
       const chineseWords = shuffle(state.words);
       els.englishGrid.innerHTML = englishWords.map(word => tileTemplate(word, "english")).join("");
@@ -1925,23 +1928,31 @@
       els.leftCount.textContent = Math.max(0, state.words.length - state.matchedIds.size);
     }
 
-    function startGame(newRound = true) {
+    function startTimerOnly() {
       clearInterval(state.timerId);
       clearTimeout(state.reviewTimerId);
-      if (newRound) prepareNewRound();
-      state.score = 0;
       state.seconds = clamp(Number(els.timeInput.value) || 120, 10, 3600);
       state.started = true;
-      state.selectedEnglish = null;
-      state.selectedChinese = null;
-      state.matchedIds = new Set();
-      showScreen("gameScreen");
-      renderBoard();
+      updateStats();
       state.timerId = setInterval(() => {
         state.seconds -= 1;
         updateStats();
         if (state.seconds <= 0) finishGame(false);
       }, 1000);
+    }
+
+    function startGame(newRound = true) {
+      clearInterval(state.timerId);
+      clearTimeout(state.reviewTimerId);
+      if (newRound) prepareNewRound();
+      state.score = 0;
+      state.started = false;
+      state.selectedEnglish = null;
+      state.selectedChinese = null;
+      state.matchedIds = new Set();
+      showScreen("gameScreen");
+      renderBoard();
+      updateStats();
     }
 
     function clamp(value, min, max) {
@@ -1964,11 +1975,7 @@
       let tile = event.target.closest(".tile");
       if (!tile || tile.classList.contains("matched")) return;
       if (!state.started) {
-        const clickedId = tile.dataset.id;
-        const clickedType = tile.dataset.type;
-        startGame(false);
-        tile = document.querySelector(`.tile[data-id="${CSS.escape(clickedId)}"][data-type="${CSS.escape(clickedType)}"]`);
-        if (!tile || tile.classList.contains("matched")) return;
+        startTimerOnly();
       }
 
       const word = state.words.find(item => item.id === tile.dataset.id);
@@ -2059,7 +2066,16 @@
     }
 
     function makeExample(word) {
-      return `I can say "${word.english}" in English.`;
+      const raw = String(word.english || "word").trim();
+      const w = raw.toLowerCase();
+      const meaning = shortChineseMeaning(word.chinese);
+      const isAdj = /的$/.test(meaning) || /(ous|ful|less|ive|able|ible|al|ic|ant|ent|ary|ory|y)$/.test(w);
+      const isVerb = /(ate|fy|ize|ise|en)$/.test(w) || /^(go|come|grow|make|take|give|get|put|set|keep|let|run|walk|use|need|want|help|play|work|study|read|write|show|find|look|listen|speak|tell|ask|answer|choose|change|move|open|close|start|finish|arrive|leave|build|create|protect|support|include|provide|offer|explain|decide|believe|consider|remember|forget|improve|reduce|increase|develop|compare|avoid|accept|refuse|allow|serve|remind|evaluate|distribute|accompany|condemn|specify|extract|congratulate|forbid|elect|retreat|confine)$/.test(w);
+      if (w === "even") return "Even a small step can make a difference.";
+      if (w === "grow") return "Plants grow quickly in warm weather.";
+      if (isAdj) return `The ${raw} idea was easy to understand.`;
+      if (isVerb) return `We need to ${w} the problem carefully.`;
+      return `The teacher explained ${raw} with a simple example.`;
     }
 
     function openReview() {

@@ -698,7 +698,7 @@
       },
       {
             "english": "flash",
-            "chinese": "使闪光 闪光",
+            "chinese": "使闪光闪光",
             "example": ""
       },
       {
@@ -863,7 +863,7 @@
       },
       {
             "english": "grin",
-            "chinese": "露齿而笑vt. 露齿笑着",
+            "chinese": "露齿而笑露齿笑着",
             "example": ""
       },
       {
@@ -888,7 +888,7 @@
       },
       {
             "english": "captivity",
-            "chinese": "被俘（的状态）",
+            "chinese": "被俘",
             "example": ""
       },
       {
@@ -918,7 +918,7 @@
       },
       {
             "english": "divorce",
-            "chinese": "离婚 与…离婚",
+            "chinese": "离婚与…离婚",
             "example": ""
       },
       {
@@ -1018,7 +1018,7 @@
       },
       {
             "english": "discount",
-            "chinese": "折扣 打折",
+            "chinese": "折扣打折",
             "example": ""
       },
       {
@@ -1328,7 +1328,7 @@
       },
       {
             "english": "chalk",
-            "chinese": "粉笔 用粉笔写",
+            "chinese": "粉笔用粉笔写",
             "example": ""
       },
       {
@@ -1388,7 +1388,7 @@
       },
       {
             "english": "Cairo",
-            "chinese": "开罗（埃及的首都）",
+            "chinese": "开罗",
             "example": ""
       },
       {
@@ -1473,7 +1473,7 @@
       },
       {
             "english": "bend",
-            "chinese": "使弯曲 弯曲",
+            "chinese": "使弯曲弯曲",
             "example": ""
       },
       {
@@ -1513,7 +1513,7 @@
       },
       {
             "english": "cage",
-            "chinese": "笼子 把…关入笼中",
+            "chinese": "笼子把…关入笼中",
             "example": ""
       },
       {
@@ -1558,7 +1558,7 @@
       },
       {
             "english": "biometric",
-            "chinese": "生物计量的 计量生物学",
+            "chinese": "生物计量的计量生物学",
             "example": ""
       },
       {
@@ -1668,7 +1668,7 @@
       },
       {
             "english": "flood",
-            "chinese": "洪水vt. 淹没",
+            "chinese": "洪水淹没",
             "example": ""
       },
       {
@@ -1858,6 +1858,9 @@
     }
 
     function renderBoard() {
+      els.wrongFeedback.classList.remove("show");
+      state.selectedEnglish = null;
+      state.selectedChinese = null;
       const englishWords = shuffle(state.words);
       const chineseWords = shuffle(state.words);
       els.englishGrid.innerHTML = englishWords.map(word => tileTemplate(word, "english")).join("");
@@ -1925,23 +1928,31 @@
       els.leftCount.textContent = Math.max(0, state.words.length - state.matchedIds.size);
     }
 
-    function startGame(newRound = true) {
+    function startTimerOnly() {
       clearInterval(state.timerId);
       clearTimeout(state.reviewTimerId);
-      if (newRound) prepareNewRound();
-      state.score = 0;
       state.seconds = clamp(Number(els.timeInput.value) || 120, 10, 3600);
       state.started = true;
-      state.selectedEnglish = null;
-      state.selectedChinese = null;
-      state.matchedIds = new Set();
-      showScreen("gameScreen");
-      renderBoard();
+      updateStats();
       state.timerId = setInterval(() => {
         state.seconds -= 1;
         updateStats();
         if (state.seconds <= 0) finishGame(false);
       }, 1000);
+    }
+
+    function startGame(newRound = true) {
+      clearInterval(state.timerId);
+      clearTimeout(state.reviewTimerId);
+      if (newRound) prepareNewRound();
+      state.score = 0;
+      state.started = false;
+      state.selectedEnglish = null;
+      state.selectedChinese = null;
+      state.matchedIds = new Set();
+      showScreen("gameScreen");
+      renderBoard();
+      updateStats();
     }
 
     function clamp(value, min, max) {
@@ -1964,11 +1975,7 @@
       let tile = event.target.closest(".tile");
       if (!tile || tile.classList.contains("matched")) return;
       if (!state.started) {
-        const clickedId = tile.dataset.id;
-        const clickedType = tile.dataset.type;
-        startGame(false);
-        tile = document.querySelector(`.tile[data-id="${CSS.escape(clickedId)}"][data-type="${CSS.escape(clickedType)}"]`);
-        if (!tile || tile.classList.contains("matched")) return;
+        startTimerOnly();
       }
 
       const word = state.words.find(item => item.id === tile.dataset.id);
@@ -2059,7 +2066,16 @@
     }
 
     function makeExample(word) {
-      return `I can say "${word.english}" in English.`;
+      const raw = String(word.english || "word").trim();
+      const w = raw.toLowerCase();
+      const meaning = shortChineseMeaning(word.chinese);
+      const isAdj = /的$/.test(meaning) || /(ous|ful|less|ive|able|ible|al|ic|ant|ent|ary|ory|y)$/.test(w);
+      const isVerb = /(ate|fy|ize|ise|en)$/.test(w) || /^(go|come|grow|make|take|give|get|put|set|keep|let|run|walk|use|need|want|help|play|work|study|read|write|show|find|look|listen|speak|tell|ask|answer|choose|change|move|open|close|start|finish|arrive|leave|build|create|protect|support|include|provide|offer|explain|decide|believe|consider|remember|forget|improve|reduce|increase|develop|compare|avoid|accept|refuse|allow|serve|remind|evaluate|distribute|accompany|condemn|specify|extract|congratulate|forbid|elect|retreat|confine)$/.test(w);
+      if (w === "even") return "Even a small step can make a difference.";
+      if (w === "grow") return "Plants grow quickly in warm weather.";
+      if (isAdj) return `The ${raw} idea was easy to understand.`;
+      if (isVerb) return `We need to ${w} the problem carefully.`;
+      return `The teacher explained ${raw} with a simple example.`;
     }
 
     function openReview() {
