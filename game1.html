@@ -1,0 +1,2428 @@
+<!doctype html>
+<html lang="zh-CN"><head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>单词消消乐</title>
+  <style>
+    :root {
+      --ink: #203040;
+      --muted: #65758a;
+      --paper: #fffdfa;
+      --line: rgba(32, 48, 64, 0.14);
+      --green: #18a66a;
+      --red: #e5484d;
+      --yellow: #ffd166;
+      --blue: #2f80ed;
+      --pink: #ff6f91;
+      --mint: #48d6b5;
+      --shadow: 0 18px 45px rgba(34, 51, 84, 0.16);
+      --font-cn: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-en: "Times New Roman", Times, serif;
+      font-family: var(--font-cn);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 12% 15%, rgba(255, 209, 102, 0.34), transparent 26%),
+        radial-gradient(circle at 84% 8%, rgba(72, 214, 181, 0.28), transparent 25%),
+        linear-gradient(135deg, #f9fbff 0%, #fff7eb 48%, #eefbf7 100%);
+      overflow-x: hidden;
+    }
+
+    button,
+    input,
+    textarea {
+      font: inherit;
+    }
+
+    button {
+      border: 0;
+      cursor: pointer;
+      color: inherit;
+    }
+
+    .app {
+      width: min(1260px, calc(100vw - 32px));
+      margin: 0 auto;
+      padding: 22px 0 28px;
+    }
+
+    .topbar {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 16px;
+      align-items: center;
+      margin-bottom: 18px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(34px, 5vw, 64px);
+      line-height: 1.02;
+      letter-spacing: 0;
+    }
+
+    .subtitle {
+      margin: 8px 0 0;
+      color: var(--muted);
+      font-size: clamp(16px, 2vw, 22px);
+    }
+
+    .status {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(105px, 1fr));
+      gap: 10px;
+      min-width: min(420px, 100%);
+    }
+
+    .stat {
+      background: rgba(255, 255, 255, 0.82);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 12px 14px;
+      box-shadow: 0 8px 22px rgba(34, 51, 84, 0.08);
+    }
+
+    .stat span {
+      display: block;
+      color: var(--muted);
+      font-size: 14px;
+      margin-bottom: 2px;
+    }
+
+    .stat strong {
+      font-size: clamp(24px, 3vw, 34px);
+      line-height: 1;
+    }
+
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(255, 255, 255, 0.72);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 12px;
+      margin-bottom: 18px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(10px);
+    }
+
+    .toolbar-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .time-control {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      min-height: 44px;
+      padding: 0 10px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      color: var(--muted);
+    }
+
+    .time-control input {
+      width: 86px;
+      border: 0;
+      outline: 0;
+      color: var(--ink);
+      font-size: 20px;
+      font-weight: 800;
+      background: transparent;
+    }
+
+    .btn {
+      min-height: 44px;
+      border-radius: 8px;
+      padding: 0 18px;
+      font-weight: 800;
+      background: #fff;
+      border: 1px solid var(--line);
+      box-shadow: 0 8px 18px rgba(34, 51, 84, 0.08);
+      transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+    }
+
+    .btn:hover,
+    .tile:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 13px 22px rgba(34, 51, 84, 0.16);
+    }
+
+    .btn.primary {
+      color: #fff;
+      background: linear-gradient(135deg, var(--blue), #7952ff);
+      border-color: transparent;
+    }
+
+    .btn.good {
+      color: #083b29;
+      background: linear-gradient(135deg, #a7f3d0, #fef3c7);
+      border-color: transparent;
+    }
+
+    .btn.warn {
+      color: #4b2430;
+      background: linear-gradient(135deg, #ffd1dc, #ffe29a);
+      border-color: transparent;
+    }
+
+    .screen {
+      display: none;
+    }
+
+    .screen.active {
+      display: block;
+    }
+
+    .board-shell {
+      position: relative;
+      min-height: 560px;
+      display: grid;
+      gap: 18px;
+      grid-template-columns: 1fr 1fr;
+      align-items: start;
+    }
+
+    .column {
+      background: rgba(255, 255, 255, 0.66);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 16px;
+      box-shadow: var(--shadow);
+    }
+
+    .column-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin: 0 0 12px;
+      font-size: clamp(20px, 2.4vw, 28px);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(168px, 1fr));
+      gap: 12px;
+    }
+
+    .tile {
+      position: relative;
+      min-height: 82px;
+      border-radius: 8px;
+      padding: 10px 12px;
+      border: 2px solid rgba(32, 48, 64, 0.1);
+      background: var(--paper);
+      box-shadow: 0 9px 20px rgba(34, 51, 84, 0.1);
+      font-size: clamp(20px, 2.2vw, 30px);
+      font-weight: 900;
+      line-height: 1.16;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      overflow-wrap: anywhere;
+      word-break: normal;
+      text-wrap: balance;
+      transition: transform 0.15s ease, opacity 0.2s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+    }
+
+    .tile.english {
+      background: #f2fbff;
+      font-family: var(--font-en);
+      white-space: nowrap;
+      overflow-wrap: normal;
+      word-break: keep-all;
+      letter-spacing: 0;
+    }
+
+    .tile.chinese {
+      background: #fff6ef;
+      font-family: var(--font-cn);
+      letter-spacing: 0.02em;
+      line-height: 1.22;
+    }
+
+    .tile.text-long { font-size: clamp(17px, 1.9vw, 25px); }
+    .tile.text-xlong { font-size: clamp(13px, 1.45vw, 20px); }
+    .tile.text-xxlong { font-size: clamp(11px, 1.18vw, 17px); }
+
+    .tile.selected {
+      border-color: var(--blue);
+      outline: 4px solid rgba(47, 128, 237, 0.18);
+      transform: translateY(-3px) scale(1.02);
+    }
+
+    .tile.matched {
+      opacity: 0;
+      pointer-events: none;
+      transform: scale(0.78);
+    }
+
+    .tile.wrong {
+      border-color: var(--red);
+      animation: shake 0.34s ease;
+    }
+
+    .feedback {
+      position: fixed;
+      inset: 0;
+      display: none;
+      place-items: center;
+      pointer-events: none;
+      z-index: 10;
+      font-size: clamp(90px, 17vw, 210px);
+      font-weight: 1000;
+      color: var(--red);
+      text-shadow: 0 10px 0 rgba(229, 72, 77, 0.12);
+    }
+
+    .feedback.show {
+      display: grid;
+      animation: pop 0.62s ease both;
+    }
+
+    .modal {
+      position: fixed;
+      inset: 0;
+      z-index: 20;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      background: rgba(18, 25, 38, 0.46);
+    }
+
+    .modal.active {
+      display: flex;
+    }
+
+    .dialog {
+      width: min(920px, 96vw);
+      max-height: 90vh;
+      overflow: auto;
+      background: #fff;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.7);
+      padding: 18px;
+      box-shadow: 0 28px 80px rgba(18, 25, 38, 0.34);
+    }
+
+    .dialog h2 {
+      margin: 0 0 10px;
+      font-size: clamp(26px, 3.4vw, 44px);
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 280px;
+      resize: vertical;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 14px;
+      outline: none;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 15px;
+      line-height: 1.5;
+      background: #fbfdff;
+    }
+
+    .hint {
+      color: var(--muted);
+      margin: 0 0 12px;
+      line-height: 1.6;
+    }
+
+    .message {
+      min-height: 26px;
+      margin: 10px 0 0;
+      color: var(--red);
+      font-weight: 800;
+    }
+
+    .import-drop {
+      display: grid;
+      gap: 10px;
+      place-items: center;
+      min-height: 150px;
+      margin: 12px 0;
+      padding: 18px;
+      border: 2px dashed rgba(47, 128, 237, 0.35);
+      border-radius: 8px;
+      background: linear-gradient(135deg, rgba(47, 128, 237, 0.08), rgba(72, 214, 181, 0.12));
+      text-align: center;
+    }
+
+    .import-drop strong {
+      font-size: clamp(22px, 3vw, 34px);
+    }
+
+    .format-list {
+      margin: 0 0 12px;
+      padding-left: 22px;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .summary {
+      text-align: center;
+      padding: 32px 12px 18px;
+      min-height: 560px;
+      display: grid;
+      align-content: center;
+      justify-items: center;
+      gap: 16px;
+    }
+
+    .summary h2 {
+      margin: 0;
+      font-size: clamp(54px, 10vw, 118px);
+      line-height: 1;
+    }
+
+    .summary .scoreline {
+      margin: 0;
+      font-size: clamp(24px, 3.8vw, 42px);
+      font-weight: 900;
+    }
+
+    .review {
+      background: rgba(255, 255, 255, 0.76);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 18px;
+      box-shadow: var(--shadow);
+    }
+
+    .review-head {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .review h2 {
+      margin: 0;
+      font-size: clamp(34px, 5vw, 58px);
+    }
+
+    .review-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 14px;
+    }
+
+    .word-card {
+      min-height: 165px;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 16px;
+      box-shadow: 0 10px 22px rgba(34, 51, 84, 0.09);
+      display: grid;
+      gap: 8px;
+      align-content: start;
+    }
+
+    .word-card h3 {
+      margin: 0;
+      color: var(--blue);
+      font-family: var(--font-en);
+      font-size: clamp(26px, 2.6vw, 36px);
+      line-height: 1.08;
+      overflow-wrap: anywhere;
+      word-break: normal;
+      text-wrap: balance;
+    }
+
+    .word-card .cn {
+      margin: 0;
+      font-family: var(--font-cn);
+      font-size: clamp(20px, 2vw, 24px);
+      font-weight: 900;
+      line-height: 1.32;
+      overflow-wrap: anywhere;
+      text-wrap: balance;
+    }
+
+    .word-card .text-long { font-size: clamp(22px, 2.2vw, 30px); }
+    .word-card .text-xlong { font-size: clamp(18px, 1.8vw, 25px); }
+    .word-card .text-xxlong { font-size: clamp(15px, 1.5vw, 21px); }
+
+    .word-card .cn.text-long { font-size: clamp(18px, 1.8vw, 22px); }
+    .word-card .cn.text-xlong { font-size: clamp(16px, 1.55vw, 20px); }
+
+    .word-card .sentence {
+      margin: 0;
+      color: #42536b;
+      font-size: 18px;
+      line-height: 1.55;
+    }
+
+    .empty {
+      text-align: center;
+      color: var(--muted);
+      padding: 32px;
+      font-size: 22px;
+    }
+
+    .confetti {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+      z-index: 19;
+    }
+
+    .confetti i {
+      position: absolute;
+      top: -18px;
+      width: 12px;
+      height: 18px;
+      border-radius: 3px;
+      animation: fall linear forwards;
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-8px); }
+      75% { transform: translateX(8px); }
+    }
+
+    @keyframes pop {
+      0% { opacity: 0; transform: scale(0.3) rotate(-10deg); }
+      35% { opacity: 1; transform: scale(1.08) rotate(4deg); }
+      100% { opacity: 0; transform: scale(0.85) rotate(0deg); }
+    }
+
+    @keyframes fall {
+      to {
+        transform: translateY(108vh) rotate(760deg);
+        opacity: 0.95;
+      }
+    }
+
+    @media (max-width: 820px) {
+      .topbar {
+        grid-template-columns: 1fr;
+      }
+
+      .status {
+        grid-template-columns: repeat(3, 1fr);
+      }
+
+      .board-shell {
+        grid-template-columns: 1fr;
+      }
+
+      .grid {
+        grid-template-columns: repeat(auto-fit, minmax(146px, 1fr));
+      }
+
+      .tile {
+        min-height: 72px;
+        font-size: clamp(18px, 5.4vw, 26px);
+      }
+
+      .tile.text-long { font-size: clamp(15px, 4.6vw, 22px); }
+      .tile.text-xlong { font-size: clamp(13px, 3.8vw, 18px); }
+      .tile.text-xxlong { font-size: clamp(10px, 3vw, 15px); }
+    }
+
+    @media (max-width: 620px) {
+      .board-shell {
+        gap: 14px;
+      }
+
+      .column {
+        padding: 12px;
+      }
+
+      .grid {
+        grid-template-columns: repeat(auto-fit, minmax(132px, 1fr));
+        gap: 10px;
+      }
+    }
+
+    @media (max-width: 520px) {
+      .app {
+        width: min(100vw - 18px, 1260px);
+        padding-top: 12px;
+      }
+
+      .status {
+        grid-template-columns: 1fr;
+      }
+
+      .toolbar {
+        align-items: stretch;
+      }
+
+      .toolbar-group,
+      .btn,
+      .time-control {
+        width: 100%;
+      }
+
+      .btn {
+        justify-content: center;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <section id="gameScreen" class="screen active">
+      <div class="topbar">
+        <div>
+          <h1>单词消消乐</h1>
+          <p class="subtitle">点击英文，再点击对应中文。答对消除，答错会提示。</p>
+        </div>
+        <div class="status" aria-live="polite">
+          <div class="stat"><span>得分</span><strong id="score">15</strong></div>
+          <div class="stat"><span>时间</span><strong id="timer">108</strong></div>
+          <div class="stat"><span>剩余</span><strong id="leftCount">18</strong></div>
+        </div>
+      </div>
+
+      <div class="toolbar">
+        <div class="toolbar-group">
+          <label class="time-control">时间
+            <input id="timeInput" type="number" min="10" max="3600" value="120">
+            秒
+          </label>
+          <button class="btn primary" id="startBtn">开始 / 重来</button>
+          <button class="btn good" id="importBtn">导入词库</button>
+          <button class="btn warn" id="reviewBtn">复习单词</button>
+          <button class="btn good" id="exportBtn">导出分享版</button>
+        </div>
+        <div class="toolbar-group">
+          <button class="btn" id="shuffleBtn">重新打乱</button>
+          <button class="btn" id="soundBtn">发音：开</button>
+        </div>
+      </div>
+
+      <div class="board-shell">
+        <section class="column">
+          <h2 class="column-title">English <span>🔊</span></h2>
+          <div id="englishGrid" class="grid"><button class="tile english matched" data-id="3-dip" data-type="english" aria-label="dip" title="dip">dip</button><button class="tile english matched" data-id="1-downhill" data-type="english" aria-label="downhill" title="downhill">downhill</button><button class="tile english " data-id="16-personnel" data-type="english" aria-label="personnel" title="personnel">personnel</button><button class="tile english " data-id="18-eruption" data-type="english" aria-label="eruption" title="eruption">eruption</button><button class="tile english " data-id="17-rectangle" data-type="english" aria-label="rectangle" title="rectangle">rectangle</button><button class="tile english " data-id="8-bump" data-type="english" aria-label="bump" title="bump">bump</button><button class="tile english text-long" data-id="0-congratulate" data-type="english" aria-label="congratulate" title="congratulate">congratulate</button><button class="tile english " data-id="2-urge" data-type="english" aria-label="urge" title="urge">urge</button><button class="tile english " data-id="5-fortnight" data-type="english" aria-label="fortnight" title="fortnight">fortnight</button><button class="tile english " data-id="6-wag" data-type="english" aria-label="wag" title="wag">wag</button><button class="tile english " data-id="12-host" data-type="english" aria-label="host" title="host">host</button><button class="tile english " data-id="19-versatile" data-type="english" aria-label="versatile" title="versatile">versatile</button><button class="tile english " data-id="9-chorus" data-type="english" aria-label="chorus" title="chorus">chorus</button><button class="tile english " data-id="15-spray" data-type="english" aria-label="spray" title="spray">spray</button><button class="tile english " data-id="11-fond" data-type="english" aria-label="fond" title="fond">fond</button><button class="tile english " data-id="14-home" data-type="english" aria-label="home" title="home">home</button><button class="tile english " data-id="7-insert" data-type="english" aria-label="insert" title="insert">insert</button><button class="tile english " data-id="4-mark" data-type="english" aria-label="mark" title="mark">mark</button><button class="tile english " data-id="13-antelope" data-type="english" aria-label="antelope" title="antelope">antelope</button><button class="tile english " data-id="10-breathe" data-type="english" aria-label="breathe" title="breathe">breathe</button></div>
+        </section>
+        <section class="column">
+          <h2 class="column-title">中文 <span>✓</span></h2>
+          <div id="chineseGrid" class="grid"><button class="tile chinese " data-id="6-wag" data-type="chinese" aria-label="摇摆，摇动" title="摇摆，摇动">摇摆；摇动</button><button class="tile chinese text-long" data-id="13-antelope" data-type="chinese" aria-label="羚羊；羚羊皮革" title="羚羊；羚羊皮革">羚羊；羚羊皮革</button><button class="tile chinese matched" data-id="3-dip" data-type="chinese" aria-label="浸，蘸" title="浸，蘸">浸；蘸</button><button class="tile chinese text-long" data-id="17-rectangle" data-type="chinese" aria-label="矩形，长方形" title="矩形，长方形">矩形；长方形</button><button class="tile chinese " data-id="8-bump" data-type="chinese" aria-label="碰撞，冲撞" title="碰撞，冲撞">碰撞；冲撞</button><button class="tile chinese text-long" data-id="5-fortnight" data-type="chinese" aria-label="两星期，14天" title="两星期，14天">两星期；14天</button><button class="tile chinese " data-id="4-mark" data-type="chinese" aria-label="痕迹，污点" title="痕迹，污点">痕迹；污点</button><button class="tile chinese " data-id="10-breathe" data-type="chinese" aria-label="呼吸" title="呼吸">呼吸</button><button class="tile chinese " data-id="7-insert" data-type="chinese" aria-label="插入，嵌入" title="插入，嵌入">插入；嵌入</button><button class="tile chinese " data-id="2-urge" data-type="chinese" aria-label="催促，驱策" title="催促，驱策">催促；驱策</button><button class="tile chinese text-long matched" data-id="1-downhill" data-type="chinese" aria-label="向山下；在山下" title="向山下；在山下">向山下；在山下</button><button class="tile chinese text-xlong" data-id="19-versatile" data-type="chinese" aria-label="（指工具、机器等）多用途的，多功能的；多才多艺的，有多种学识和技能的" title="（指工具、机器等）多用途的，多功能的；多才多艺的，有多种学识和技能的">（指工具；机器等）多用途</button><button class="tile chinese text-long" data-id="9-chorus" data-type="chinese" aria-label="（歌曲的）副歌；合唱；合唱队" title="（歌曲的）副歌；合唱；合唱队">（歌曲的）副歌；合唱</button><button class="tile chinese text-long" data-id="12-host" data-type="chinese" aria-label="主人；主持人；许多 主持；作为主人招待" title="主人；主持人；许多 主持；作为主人招待">主人；主持人</button><button class="tile chinese text-xlong" data-id="15-spray" data-type="chinese" aria-label="喷雾；喷雾状物（使）喷洒，（使）溅散" title="喷雾；喷雾状物（使）喷洒，（使）溅散">喷雾；喷雾状物（使）喷洒</button><button class="tile chinese text-long" data-id="18-eruption" data-type="chinese" aria-label="（火山）爆发，喷发；出疹" title="（火山）爆发，喷发；出疹">（火山）爆发；喷发</button><button class="tile chinese text-long" data-id="16-personnel" data-type="chinese" aria-label="&lt;总称&gt;人员，员工" title="&lt;总称&gt;人员，员工">&lt;总称&gt;人员；员工</button><button class="tile chinese " data-id="11-fond" data-type="chinese" aria-label="喜欢的" title="喜欢的">喜欢的</button><button class="tile chinese " data-id="14-home" data-type="chinese" aria-label="家，住宅；产地；家乡 在家；回家 国内的；家庭的" title="家，住宅；产地；家乡 在家；回家 国内的；家庭的">家；住宅</button><button class="tile chinese " data-id="0-congratulate" data-type="chinese" aria-label="祝贺" title="祝贺">祝贺</button></div>
+        </section>
+      </div>
+    </section>
+
+    <section id="summaryScreen" class="screen">
+      <div class="summary">
+        <h2 id="summaryTitle">时间到！</h2>
+        <p class="scoreline">最终得分：<span id="finalScore">0</span></p>
+        <div class="toolbar-group">
+          <button class="btn primary" id="summaryReviewBtn">查看复习</button>
+          <button class="btn good" id="playAgainBtn">再玩一次</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="reviewScreen" class="screen">
+      <div class="review">
+        <div class="review-head">
+          <div>
+            <h2>复习时间</h2>
+            <p class="subtitle" id="reviewPageText">第 1 页</p>
+          </div>
+          <div class="toolbar-group">
+            <button class="btn" id="prevPageBtn">上一页</button>
+            <button class="btn" id="nextPageBtn">下一页</button>
+            <button class="btn good" id="nextRoundBtn">下一轮游戏</button>
+            <button class="btn primary" id="backGameBtn">回到游戏</button>
+          </div>
+        </div>
+        <div id="reviewGrid" class="review-grid"></div>
+      </div>
+    </section>
+  </main>
+
+  <div id="wrongFeedback" class="feedback show">✕</div>
+  <div id="confetti" class="confetti" aria-hidden="true"></div>
+
+  <div id="importModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="importTitle">
+    <div class="dialog">
+      <h2 id="importTitle">导入单词库</h2>
+      <p class="hint">请选择 PDF、Word、JSON 或 TXT 文件，系统会自动读取里面的单词并转成游戏词库。</p>
+      <div class="import-drop">
+        <strong>选择词库文件</strong>
+        <button class="btn primary" id="loadFileBtn">打开文件</button>
+      </div>
+      <ul class="format-list">
+        <li>每行写：apple - 苹果 - I eat an apple every morning.</li>
+        <li>也可以用表格：第一列英文，第二列中文，第三列例句。</li>
+        <li>PDF 需要是可复制文字的文档；扫描图片版 PDF 暂时不能自动识别。</li>
+        <li>例句可不写，复习页会自动生成简单例句。</li>
+      </ul>
+      <textarea id="jsonInput" spellcheck="false" aria-label="自动转换出的 JSON"></textarea>
+      <p id="importMessage" class="message"></p>
+      <div class="toolbar-group">
+        <button class="btn primary" id="applyJsonBtn">应用当前内容</button>
+        <button class="btn" id="closeModalBtn">关闭</button>
+      </div>
+      <input id="fileInput" type="file" accept=".pdf,application/pdf,.docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document,.json,application/json,.txt,text/plain" hidden="">
+    </div>
+  </div>
+
+  <script>
+    const defaultWords = [
+      {
+            "english": "chart",
+            "chinese": "图表",
+            "example": ""
+      },
+      {
+            "english": "heat",
+            "chinese": "高温；热度；热烈，强烈的感情 使激动；把…加热",
+            "example": ""
+      },
+      {
+            "english": "retreat",
+            "chinese": "撤退，后退；撤销，作罢",
+            "example": ""
+      },
+      {
+            "english": "consult",
+            "chinese": "商议，商量；咨询",
+            "example": ""
+      },
+      {
+            "english": "witness",
+            "chinese": "目击者；证人",
+            "example": ""
+      },
+      {
+            "english": "beehive",
+            "chinese": "蜂窝，蜂巢",
+            "example": ""
+      },
+      {
+            "english": "mop",
+            "chinese": "拖把 用拖把拖",
+            "example": ""
+      },
+      {
+            "english": "pity",
+            "chinese": "怜悯；同情",
+            "example": ""
+      },
+      {
+            "english": "inch",
+            "chinese": "英寸",
+            "example": ""
+      },
+      {
+            "english": "clinic",
+            "chinese": "诊所",
+            "example": ""
+      },
+      {
+            "english": "punish",
+            "chinese": "惩罚",
+            "example": ""
+      },
+      {
+            "english": "personnel",
+            "chinese": "\u003c总称>人员，员工",
+            "example": ""
+      },
+      {
+            "english": "certificate",
+            "chinese": "证书，执照",
+            "example": ""
+      },
+      {
+            "english": "fax",
+            "chinese": "给…发传真 传真",
+            "example": ""
+      },
+      {
+            "english": "hold",
+            "chinese": "抓住，持有；拥有；保存；拘留；约束，控制 支持；持续 拿，抓；控制；保 留",
+            "example": ""
+      },
+      {
+            "english": "parcel",
+            "chinese": "包裹",
+            "example": ""
+      },
+      {
+            "english": "maple",
+            "chinese": "枫树",
+            "example": ""
+      },
+      {
+            "english": "eventually",
+            "chinese": "终于，最后",
+            "example": ""
+      },
+      {
+            "english": "noble",
+            "chinese": "高尚的；贵族的，显贵的",
+            "example": ""
+      },
+      {
+            "english": "bowling",
+            "chinese": "保龄球运动",
+            "example": ""
+      },
+      {
+            "english": "favorite",
+            "chinese": "幸运儿；特别喜欢的人或事物 最喜欢的；中意的；宠爱的",
+            "example": ""
+      },
+      {
+            "english": "host",
+            "chinese": "主人；主持人；许多 主持；作为主人招待",
+            "example": ""
+      },
+      {
+            "english": "cancel",
+            "chinese": "取消，废除",
+            "example": ""
+      },
+      {
+            "english": "invent",
+            "chinese": "发明，创造",
+            "example": ""
+      },
+      {
+            "english": "gallery",
+            "chinese": "画廊，美术馆",
+            "example": ""
+      },
+      {
+            "english": "mental",
+            "chinese": "精神的，心理的；智力的",
+            "example": ""
+      },
+      {
+            "english": "architect",
+            "chinese": "建筑师，设计师",
+            "example": ""
+      },
+      {
+            "english": "insert",
+            "chinese": "插入，嵌入",
+            "example": ""
+      },
+      {
+            "english": "current",
+            "chinese": "当前的，现在的；流通的，通用的",
+            "example": ""
+      },
+      {
+            "english": "emphasize",
+            "chinese": "强调，使突出",
+            "example": ""
+      },
+      {
+            "english": "crew",
+            "chinese": "全体船员；全体乘务员；一群，一帮",
+            "example": ""
+      },
+      {
+            "english": "error",
+            "chinese": "错误",
+            "example": ""
+      },
+      {
+            "english": "furniture",
+            "chinese": "家具",
+            "example": ""
+      },
+      {
+            "english": "sacred",
+            "chinese": "神圣的；宗教的；庄严的",
+            "example": ""
+      },
+      {
+            "english": "monument",
+            "chinese": "纪念碑；纪念馆；纪念物",
+            "example": ""
+      },
+      {
+            "english": "kid",
+            "chinese": "小孩；小山羊 欺骗；取笑；戏弄",
+            "example": ""
+      },
+      {
+            "english": "carriage",
+            "chinese": "四轮马车",
+            "example": ""
+      },
+      {
+            "english": "funeral",
+            "chinese": "葬礼，丧礼",
+            "example": ""
+      },
+      {
+            "english": "pension",
+            "chinese": "退休金，养老金",
+            "example": ""
+      },
+      {
+            "english": "critic",
+            "chinese": "批评者；评论家",
+            "example": ""
+      },
+      {
+            "english": "departure",
+            "chinese": "离开，离去",
+            "example": ""
+      },
+      {
+            "english": "fond",
+            "chinese": "喜欢的",
+            "example": ""
+      },
+      {
+            "english": "biochemistry",
+            "chinese": "生物化学",
+            "example": ""
+      },
+      {
+            "english": "argue",
+            "chinese": "争吵，辩论",
+            "example": ""
+      },
+      {
+            "english": "central",
+            "chinese": "中心的，中央的",
+            "example": ""
+      },
+      {
+            "english": "coach",
+            "chinese": "教练",
+            "example": ""
+      },
+      {
+            "english": "panic",
+            "chinese": "恐慌，惊慌，慌乱（使）恐慌",
+            "example": ""
+      },
+      {
+            "english": "courtesy",
+            "chinese": "谦恭有礼，礼貌；有礼貌的举止和言辞",
+            "example": ""
+      },
+      {
+            "english": "collar",
+            "chinese": "衣领，领子",
+            "example": ""
+      },
+      {
+            "english": "downhill",
+            "chinese": "向山下；在山下",
+            "example": ""
+      },
+      {
+            "english": "verdict",
+            "chinese": "（陪审团的）裁决，裁定；（经过试验、检验或体验发表的）决定，意见",
+            "example": ""
+      },
+      {
+            "english": "analysis",
+            "chinese": "分析",
+            "example": ""
+      },
+      {
+            "english": "intelligence",
+            "chinese": "智力，智慧",
+            "example": ""
+      },
+      {
+            "english": "glacier",
+            "chinese": "冰河，冰川",
+            "example": ""
+      },
+      {
+            "english": "breathe",
+            "chinese": "呼吸",
+            "example": ""
+      },
+      {
+            "english": "signal",
+            "chinese": "发信号 信号",
+            "example": ""
+      },
+      {
+            "english": "obey",
+            "chinese": "服从，听从；遵守，遵循",
+            "example": ""
+      },
+      {
+            "english": "rectangle",
+            "chinese": "矩形，长方形",
+            "example": ""
+      },
+      {
+            "english": "mass",
+            "chinese": "团，块，堆；大量，大批，众多",
+            "example": ""
+      },
+      {
+            "english": "format",
+            "chinese": "格式，样式；版式",
+            "example": ""
+      },
+      {
+            "english": "breed",
+            "chinese": "品种vt. 生育；繁殖vt. 饲养；培养",
+            "example": ""
+      },
+      {
+            "english": "impact",
+            "chinese": "碰撞，撞击；冲击力；影响 挤入，压紧；撞击；对…产生影响vi. 冲撞，冲击；产生影响",
+            "example": ""
+      },
+      {
+            "english": "barrier",
+            "chinese": "栅栏；障碍，隔阂",
+            "example": ""
+      },
+      {
+            "english": "chorus",
+            "chinese": "（歌曲的）副歌；合唱；合唱队",
+            "example": ""
+      },
+      {
+            "english": "brilliant",
+            "chinese": "闪光的，明亮的；辉煌的；聪颖的",
+            "example": ""
+      },
+      {
+            "english": "fly",
+            "chinese": "飞；驾驶飞机；飘扬 驾驶（飞机）；飞越；使飘扬 飞行；苍蝇，两翼昆虫",
+            "example": ""
+      },
+      {
+            "english": "bubble",
+            "chinese": "气泡，泡沫；泡状物 沸腾，冒泡；发出气泡声 使冒泡；滔滔不绝地说",
+            "example": ""
+      },
+      {
+            "english": "juror",
+            "chinese": "陪审员；评判员",
+            "example": ""
+      },
+      {
+            "english": "visible",
+            "chinese": "看得见的，可见的",
+            "example": ""
+      },
+      {
+            "english": "influential",
+            "chinese": "有影响力的；有权势的n. 有影响力的人物",
+            "example": ""
+      },
+      {
+            "english": "dawn",
+            "chinese": "黎明，拂晓",
+            "example": ""
+      },
+      {
+            "english": "emperor",
+            "chinese": "皇帝，君主",
+            "example": ""
+      },
+      {
+            "english": "arbitrary",
+            "chinese": "随意的，主观的；独断的，专制的",
+            "example": ""
+      },
+      {
+            "english": "curse",
+            "chinese": "诅咒，咒骂；使苦恼，使困苦 诅咒，咒语；祸害，祸因",
+            "example": ""
+      },
+      {
+            "english": "goose",
+            "chinese": "鹅",
+            "example": ""
+      },
+      {
+            "english": "missile",
+            "chinese": "导弹",
+            "example": ""
+      },
+      {
+            "english": "fulfill",
+            "chinese": "履行（诺言等）；执行（命令等）；达到（目的）",
+            "example": ""
+      },
+      {
+            "english": "seldom",
+            "chinese": "很少",
+            "example": ""
+      },
+      {
+            "english": "public",
+            "chinese": "公众的；公共的，公用的",
+            "example": ""
+      },
+      {
+            "english": "seed",
+            "chinese": "种子",
+            "example": ""
+      },
+      {
+            "english": "illustrate",
+            "chinese": "给…加插图；说明，阐释",
+            "example": ""
+      },
+      {
+            "english": "clay",
+            "chinese": "黏土，泥土",
+            "example": ""
+      },
+      {
+            "english": "flesh",
+            "chinese": "肉，肉体",
+            "example": ""
+      },
+      {
+            "english": "literature",
+            "chinese": "文学，文学作品；文献",
+            "example": ""
+      },
+      {
+            "english": "boycott",
+            "chinese": "联合抵制；拒绝参加",
+            "example": ""
+      },
+      {
+            "english": "refuse",
+            "chinese": "拒绝，不接受",
+            "example": ""
+      },
+      {
+            "english": "bump",
+            "chinese": "碰撞，冲撞",
+            "example": ""
+      },
+      {
+            "english": "however",
+            "chinese": "无论如何；不管怎样 然而；可是",
+            "example": ""
+      },
+      {
+            "english": "spy",
+            "chinese": "间谍",
+            "example": ""
+      },
+      {
+            "english": "abstract",
+            "chinese": "抽象的；理论上的n. 摘要",
+            "example": ""
+      },
+      {
+            "english": "cough",
+            "chinese": "咳嗽",
+            "example": ""
+      },
+      {
+            "english": "arrange",
+            "chinese": "安排；准备",
+            "example": ""
+      },
+      {
+            "english": "bless",
+            "chinese": "求神赐福于",
+            "example": ""
+      },
+      {
+            "english": "home",
+            "chinese": "家，住宅；产地；家乡 在家；回家 国内的；家庭的",
+            "example": ""
+      },
+      {
+            "english": "account",
+            "chinese": "账户；账目，账单；解释，理由 解释；报账vt. 认为；把…视为",
+            "example": ""
+      },
+      {
+            "english": "mark",
+            "chinese": "痕迹，污点",
+            "example": ""
+      },
+      {
+            "english": "pressure",
+            "chinese": "压力，压强；心理上的压力",
+            "example": ""
+      },
+      {
+            "english": "limb",
+            "chinese": "肢",
+            "example": ""
+      },
+      {
+            "english": "preference",
+            "chinese": "喜欢，偏爱；偏爱的人或事物",
+            "example": ""
+      },
+      {
+            "english": "extract",
+            "chinese": "提取，提炼；（费力地）拔出；选取，摘录 汁；摘录；提炼物，浓缩物",
+            "example": ""
+      },
+      {
+            "english": "congratulate",
+            "chinese": "祝贺",
+            "example": ""
+      },
+      {
+            "english": "feature",
+            "chinese": "特征，特色",
+            "example": ""
+      },
+      {
+            "english": "forbid",
+            "chinese": "禁止；妨碍，阻止",
+            "example": ""
+      },
+      {
+            "english": "sacrifice",
+            "chinese": "牺牲",
+            "example": ""
+      },
+      {
+            "english": "elect",
+            "chinese": "选举，推举",
+            "example": ""
+      },
+      {
+            "english": "electronic",
+            "chinese": "电子的",
+            "example": ""
+      },
+      {
+            "english": "fiction",
+            "chinese": "小说；虚构的事",
+            "example": ""
+      },
+      {
+            "english": "battle",
+            "chinese": "战斗，战役 与…作战，争斗",
+            "example": ""
+      },
+      {
+            "english": "restrict",
+            "chinese": "限制，限定",
+            "example": ""
+      },
+      {
+            "english": "victory",
+            "chinese": "胜利，成功",
+            "example": ""
+      },
+      {
+            "english": "gather",
+            "chinese": "（使）聚集；（使）集合",
+            "example": ""
+      },
+      {
+            "english": "motto",
+            "chinese": "箴言，格言；座右铭",
+            "example": ""
+      },
+      {
+            "english": "domestic",
+            "chinese": "本国的，国内的；家庭的，家用的；驯养的",
+            "example": ""
+      },
+      {
+            "english": "claw",
+            "chinese": "抓，撕，挠（动物的）爪",
+            "example": ""
+      },
+      {
+            "english": "circle",
+            "chinese": "圆，圆周；圈，环状物vt. 圈出vt. 环绕，围绕；盘旋",
+            "example": ""
+      },
+      {
+            "english": "hearing",
+            "chinese": "听力；审讯，听讯",
+            "example": ""
+      },
+      {
+            "english": "ash",
+            "chinese": "灰，灰烬；废墟",
+            "example": ""
+      },
+      {
+            "english": "ham",
+            "chinese": "火腿",
+            "example": ""
+      },
+      {
+            "english": "burglar",
+            "chinese": "盗贼，破门盗窃者",
+            "example": ""
+      },
+      {
+            "english": "primitive",
+            "chinese": "原始的，远古的",
+            "example": ""
+      },
+      {
+            "english": "tourist",
+            "chinese": "旅游者；观光者",
+            "example": ""
+      },
+      {
+            "english": "vertical",
+            "chinese": "垂直的，直立的",
+            "example": ""
+      },
+      {
+            "english": "delight",
+            "chinese": "快乐，高兴 使高兴，使欣喜",
+            "example": ""
+      },
+      {
+            "english": "desire",
+            "chinese": "希望，渴望",
+            "example": ""
+      },
+      {
+            "english": "mud",
+            "chinese": "泥，烂泥",
+            "example": ""
+      },
+      {
+            "english": "innovative",
+            "chinese": "新发明的，革新的",
+            "example": ""
+      },
+      {
+            "english": "authentic",
+            "chinese": "真的，真正的；可靠的，可信的",
+            "example": ""
+      },
+      {
+            "english": "require",
+            "chinese": "需要；要求",
+            "example": ""
+      },
+      {
+            "english": "persuade",
+            "chinese": "说服，劝告",
+            "example": ""
+      },
+      {
+            "english": "spray",
+            "chinese": "喷雾；喷雾状物（使）喷洒，（使）溅散",
+            "example": ""
+      },
+      {
+            "english": "debt",
+            "chinese": "债务",
+            "example": ""
+      },
+      {
+            "english": "origin",
+            "chinese": "起点，开端；来源，起源",
+            "example": ""
+      },
+      {
+            "english": "statue",
+            "chinese": "雕像，塑像",
+            "example": ""
+      },
+      {
+            "english": "worthwhile",
+            "chinese": "值得做的",
+            "example": ""
+      },
+      {
+            "english": "versatile",
+            "chinese": "（指工具、机器等）多用途的，多功能的；多才多艺的，有多种学识和技能的",
+            "example": ""
+      },
+      {
+            "english": "carcass",
+            "chinese": "动物尸体",
+            "example": ""
+      },
+      {
+            "english": "target",
+            "chinese": "把…作为目标n. 靶子；目标",
+            "example": ""
+      },
+      {
+            "english": "invite",
+            "chinese": "邀请",
+            "example": ""
+      },
+      {
+            "english": "award",
+            "chinese": "奖；奖品，奖金 授予，奖给",
+            "example": ""
+      },
+      {
+            "english": "dome",
+            "chinese": "穹顶，圆屋顶",
+            "example": ""
+      },
+      {
+            "english": "thermos",
+            "chinese": "热水瓶，保温瓶",
+            "example": ""
+      },
+      {
+            "english": "reward",
+            "chinese": "酬谢，酬劳",
+            "example": ""
+      },
+      {
+            "english": "column",
+            "chinese": "柱，圆柱；列，栏；（报纸的）专栏",
+            "example": ""
+      },
+      {
+            "english": "introvert",
+            "chinese": "内向的人",
+            "example": ""
+      },
+      {
+            "english": "necklace",
+            "chinese": "项链",
+            "example": ""
+      },
+      {
+            "english": "ant",
+            "chinese": "蚂蚁",
+            "example": ""
+      },
+      {
+            "english": "brief",
+            "chinese": "短暂的，短时间的；简洁的，简短的",
+            "example": ""
+      },
+      {
+            "english": "screw",
+            "chinese": "用螺丝钉固定；拧紧n. 螺丝钉",
+            "example": ""
+      },
+      {
+            "english": "antelope",
+            "chinese": "羚羊；羚羊皮革",
+            "example": ""
+      },
+      {
+            "english": "fall",
+            "chinese": "落下；摔倒；变成；来临；减弱 下降；秋天；瀑布",
+            "example": ""
+      },
+      {
+            "english": "beyond",
+            "chinese": "（表示位置）在或往…另一边；（表示范围）超出；非…所能及",
+            "example": ""
+      },
+      {
+            "english": "steady",
+            "chinese": "稳固的，平稳的",
+            "example": ""
+      },
+      {
+            "english": "attach",
+            "chinese": "贴；系；附上",
+            "example": ""
+      },
+      {
+            "english": "sausage",
+            "chinese": "香肠，腊肠",
+            "example": ""
+      },
+      {
+            "english": "obtain",
+            "chinese": "获得，得到",
+            "example": ""
+      },
+      {
+            "english": "guitar",
+            "chinese": "吉他；六弦琴",
+            "example": ""
+      },
+      {
+            "english": "split",
+            "chinese": "裂口，裂缝 裂开，劈开，撕开",
+            "example": ""
+      },
+      {
+            "english": "beast",
+            "chinese": "兽",
+            "example": ""
+      },
+      {
+            "english": "camel",
+            "chinese": "骆驼",
+            "example": ""
+      },
+      {
+            "english": "urge",
+            "chinese": "催促，驱策",
+            "example": ""
+      },
+      {
+            "english": "recommend",
+            "chinese": "推荐，推举",
+            "example": ""
+      },
+      {
+            "english": "economy",
+            "chinese": "节约，节省；经济",
+            "example": ""
+      },
+      {
+            "english": "dessert",
+            "chinese": "（餐后）甜食，甜点",
+            "example": ""
+      },
+      {
+            "english": "condemn",
+            "chinese": "谴责，责备",
+            "example": ""
+      },
+      {
+            "english": "moist",
+            "chinese": "潮湿的，湿润的",
+            "example": ""
+      },
+      {
+            "english": "drama",
+            "chinese": "戏剧，戏剧艺术；剧本；戏剧性事件",
+            "example": ""
+      },
+      {
+            "english": "comma",
+            "chinese": "逗号",
+            "example": ""
+      },
+      {
+            "english": "comet",
+            "chinese": "【天】 彗星",
+            "example": ""
+      },
+      {
+            "english": "disaster",
+            "chinese": "灾难，灾祸",
+            "example": ""
+      },
+      {
+            "english": "even",
+            "chinese": "甚至",
+            "example": ""
+      },
+      {
+            "english": "wag",
+            "chinese": "摇摆，摇动",
+            "example": ""
+      },
+      {
+            "english": "amateur",
+            "chinese": "业余的，非职业的",
+            "example": ""
+      },
+      {
+            "english": "specify",
+            "chinese": "具体指定；详细说明",
+            "example": ""
+      },
+      {
+            "english": "substitute",
+            "chinese": "代替的人或物 用…代替",
+            "example": ""
+      },
+      {
+            "english": "region",
+            "chinese": "地区；地域",
+            "example": ""
+      },
+      {
+            "english": "anonymous",
+            "chinese": "无名的；假名的；匿名的；不记名的",
+            "example": ""
+      },
+      {
+            "english": "handful",
+            "chinese": "一把；少数",
+            "example": ""
+      },
+      {
+            "english": "agriculture",
+            "chinese": "农业",
+            "example": ""
+      },
+      {
+            "english": "fuel",
+            "chinese": "燃料vt. 给…加燃料",
+            "example": ""
+      },
+      {
+            "english": "beancurd",
+            "chinese": "豆腐",
+            "example": ""
+      },
+      {
+            "english": "fortnight",
+            "chinese": "两星期，14天",
+            "example": ""
+      },
+      {
+            "english": "evaluate",
+            "chinese": "评价，估计",
+            "example": ""
+      },
+      {
+            "english": "dip",
+            "chinese": "浸，蘸",
+            "example": ""
+      },
+      {
+            "english": "remind",
+            "chinese": "提醒；使想起",
+            "example": ""
+      },
+      {
+            "english": "distribute",
+            "chinese": "分配，分给",
+            "example": ""
+      },
+      {
+            "english": "bitter",
+            "chinese": "有苦味的；严寒的，刺骨的",
+            "example": ""
+      },
+      {
+            "english": "fat",
+            "chinese": "（肉）肥的；肥胖的 脂肪；肥肉",
+            "example": ""
+      },
+      {
+            "english": "accompany",
+            "chinese": "陪伴，陪同；伴随",
+            "example": ""
+      },
+      {
+            "english": "vest",
+            "chinese": "马甲，背心",
+            "example": ""
+      },
+      {
+            "english": "acquaintance",
+            "chinese": "相识的人，熟人；相识",
+            "example": ""
+      },
+      {
+            "english": "consequence",
+            "chinese": "结果，后果",
+            "example": ""
+      },
+      {
+            "english": "worldwide",
+            "chinese": "世界范围的，遍及全球的",
+            "example": ""
+      },
+      {
+            "english": "mankind",
+            "chinese": "人类",
+            "example": ""
+      },
+      {
+            "english": "banal",
+            "chinese": "陈腐的；平庸的",
+            "example": ""
+      },
+      {
+            "english": "declare",
+            "chinese": "宣布，宣告；声明",
+            "example": ""
+      },
+      {
+            "english": "everyone",
+            "chinese": "每个人；人人",
+            "example": ""
+      },
+      {
+            "english": "sob",
+            "chinese": "抽泣",
+            "example": ""
+      },
+      {
+            "english": "flat",
+            "chinese": "平坦的 公寓",
+            "example": ""
+      },
+      {
+            "english": "precious",
+            "chinese": "宝贵的，珍贵的",
+            "example": ""
+      },
+      {
+            "english": "eruption",
+            "chinese": "（火山）爆发，喷发；出疹",
+            "example": ""
+      }
+];
+
+    const FORCE_EMBEDDED_WORDS = true;
+    const ROUND_SIZE = 20;
+    const PDF_JS_URL = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js";
+    const PDF_WORKER_URL = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+
+    const state = {
+      wordBank: loadWords(),
+      words: [],
+      score: 0,
+      seconds: 120,
+      timerId: null,
+      started: false,
+      soundOn: true,
+      selectedEnglish: null,
+      selectedChinese: null,
+      matchedIds: new Set(),
+      reviewPage: 0,
+      reviewTimerId: null
+    };
+
+    state.words = pickRoundWords(state.wordBank);
+
+    const els = {
+      gameScreen: document.getElementById("gameScreen"),
+      summaryScreen: document.getElementById("summaryScreen"),
+      reviewScreen: document.getElementById("reviewScreen"),
+      score: document.getElementById("score"),
+      timer: document.getElementById("timer"),
+      leftCount: document.getElementById("leftCount"),
+      timeInput: document.getElementById("timeInput"),
+      englishGrid: document.getElementById("englishGrid"),
+      chineseGrid: document.getElementById("chineseGrid"),
+      startBtn: document.getElementById("startBtn"),
+      importBtn: document.getElementById("importBtn"),
+      exportBtn: document.getElementById("exportBtn"),
+      reviewBtn: document.getElementById("reviewBtn"),
+      shuffleBtn: document.getElementById("shuffleBtn"),
+      soundBtn: document.getElementById("soundBtn"),
+      wrongFeedback: document.getElementById("wrongFeedback"),
+      confetti: document.getElementById("confetti"),
+      summaryTitle: document.getElementById("summaryTitle"),
+      finalScore: document.getElementById("finalScore"),
+      summaryReviewBtn: document.getElementById("summaryReviewBtn"),
+      playAgainBtn: document.getElementById("playAgainBtn"),
+      reviewGrid: document.getElementById("reviewGrid"),
+      reviewPageText: document.getElementById("reviewPageText"),
+      prevPageBtn: document.getElementById("prevPageBtn"),
+      nextPageBtn: document.getElementById("nextPageBtn"),
+      nextRoundBtn: document.getElementById("nextRoundBtn"),
+      backGameBtn: document.getElementById("backGameBtn"),
+      importModal: document.getElementById("importModal"),
+      jsonInput: document.getElementById("jsonInput"),
+      importMessage: document.getElementById("importMessage"),
+      applyJsonBtn: document.getElementById("applyJsonBtn"),
+      loadFileBtn: document.getElementById("loadFileBtn"),
+      closeModalBtn: document.getElementById("closeModalBtn"),
+      fileInput: document.getElementById("fileInput")
+    };
+
+    function loadWords() {
+      if (FORCE_EMBEDDED_WORDS) return normalizeWords(defaultWords);
+      try {
+        const saved = JSON.parse(localStorage.getItem("wordMatchWords") || "null");
+        const savedWords = normalizeWords(saved);
+        return savedWords.length ? savedWords : normalizeWords(defaultWords);
+      } catch {
+        return normalizeWords(defaultWords);
+      }
+    }
+
+    function normalizeWords(input) {
+      if (!Array.isArray(input)) return [];
+      return input
+        .map((item, index) => ({
+          id: String(index) + "-" + String(item.english || "").trim().toLowerCase(),
+          english: String(item.english || "").trim(),
+          chinese: String(item.chinese || "").trim(),
+          example: String(item.example || "").trim()
+        }))
+        .filter(item => item.english && item.chinese);
+    }
+
+    function saveWords(words) {
+      localStorage.setItem("wordMatchWords", JSON.stringify(words.map(({ english, chinese, example }) => ({ english, chinese, example }))));
+    }
+
+    function wordsForExport() {
+      return normalizeWords(state.wordBank).map(({ english, chinese, example }) => ({ english, chinese, example }));
+    }
+
+    function makeShareHtml() {
+      const wordsJson = JSON.stringify(wordsForExport(), null, 6).replace(/</g, "\\u003c");
+      const replacement = "const defaultWords = " + wordsJson + ";";
+      let html = "<!doctype html>\n" + document.documentElement.outerHTML;
+      html = html.replace(/const defaultWords = \[[\s\S]*?\n    \];/, replacement);
+      html = html.replace("const FORCE_EMBEDDED_WORDS = false;", "const FORCE_EMBEDDED_WORDS = true;");
+      return html;
+    }
+
+    function downloadShareHtml() {
+      const words = wordsForExport();
+      if (!words.length) {
+        alert("当前没有可导出的单词，请先导入或应用单词库。");
+        return;
+      }
+      const blob = new Blob([makeShareHtml()], { type: "text/html;charset=utf-8" });
+      const link = document.createElement("a");
+      const date = new Date().toISOString().slice(0, 10);
+      link.href = URL.createObjectURL(blob);
+      link.download = `单词消消乐-内置${words.length}词-${date}.html`;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      setTimeout(() => URL.revokeObjectURL(link.href), 1000);
+    }
+
+    function pickRoundWords(words) {
+      return normalizeWords(shuffle(words).slice(0, ROUND_SIZE));
+    }
+
+    function prepareNewRound() {
+      state.words = pickRoundWords(state.wordBank);
+    }
+
+    function shuffle(items) {
+      const result = [...items];
+      for (let i = result.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [result[i], result[j]] = [result[j], result[i]];
+      }
+      return result;
+    }
+
+    function speak(text, lang) {
+      if (!state.soundOn || !("speechSynthesis" in window) || !("SpeechSynthesisUtterance" in window)) return;
+      try {
+        window.speechSynthesis.cancel();
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = lang;
+        utterance.voice = chooseEnglishVoice();
+        utterance.rate = lang === "en-US" ? 0.82 : 0.92;
+        utterance.pitch = 1.04;
+        window.speechSynthesis.speak(utterance);
+      } catch {
+        state.soundOn = false;
+        els.soundBtn.textContent = "发音：关";
+      }
+    }
+
+    function chooseEnglishVoice() {
+      if (!("speechSynthesis" in window)) return null;
+      const voices = window.speechSynthesis.getVoices();
+      const englishVoices = voices.filter(voice => /^en[-_]/i.test(voice.lang));
+      const preferredNames = ["samantha", "jenny", "aria", "zira", "susan", "karen", "moira", "tessa", "serena", "female", "woman"];
+      return englishVoices.find(voice => preferredNames.some(name => voice.name.toLowerCase().includes(name)))
+        || englishVoices.find(voice => /us|gb|uk/i.test(voice.lang))
+        || englishVoices[0]
+        || null;
+    }
+
+    if ("speechSynthesis" in window) {
+      window.speechSynthesis.onvoiceschanged = chooseEnglishVoice;
+    }
+
+    function showScreen(name) {
+      [els.gameScreen, els.summaryScreen, els.reviewScreen].forEach(screen => screen.classList.remove("active"));
+      els[name].classList.add("active");
+    }
+
+    function renderBoard() {
+      const englishWords = shuffle(state.words);
+      const chineseWords = shuffle(state.words);
+      els.englishGrid.innerHTML = englishWords.map(word => tileTemplate(word, "english")).join("");
+      els.chineseGrid.innerHTML = chineseWords.map(word => tileTemplate(word, "chinese")).join("");
+      updateStats();
+    }
+
+    function tileTemplate(word, type) {
+      const fullLabel = type === "english" ? word.english : word.chinese;
+      const label = type === "english" ? word.english : shortChineseMeaning(word.chinese);
+      return `<button class="tile ${type} ${textSizeClass(label, type)}" data-id="${escapeHtml(word.id)}" data-type="${type}" aria-label="${escapeHtml(fullLabel)}" title="${escapeHtml(fullLabel)}">${escapeHtml(label)}</button>`;
+    }
+
+    function textSizeClass(text, type = "") {
+      const score = textLengthScore(text);
+      if (type === "english") {
+        if (score >= 18) return "text-xxlong";
+        if (score >= 14) return "text-xlong";
+        if (score >= 10) return "text-long";
+        return "";
+      }
+      if (score >= 16) return "text-xlong";
+      if (score >= 9) return "text-long";
+      return "";
+    }
+
+    function shortChineseMeaning(text) {
+      const cleaned = String(text || "")
+        .replace(/[；;、，,\/]/g, "；")
+        .replace(/\s+/g, "")
+        .trim();
+      const parts = cleaned
+        .split("；")
+        .map(part => part
+          .replace(/^(?:n|v|adj|adv|prep|conj|pron|num|art|interj|vt|vi)\.?/i, "")
+          .replace(/^[.。:：\-—–]+|[.。:：\-—–]+$/g, "")
+          .trim()
+        )
+        .filter(Boolean);
+      return (parts.length ? parts.slice(0, 2).join("；") : cleaned).slice(0, 12);
+    }
+
+    function textLengthScore(text) {
+      return Array.from(String(text || "")).reduce((total, char) => {
+        if (/[\u3400-\u9fff]/.test(char)) return total + 1.8;
+        if (/[A-Z]/.test(char)) return total + 1.15;
+        if (/\s/.test(char)) return total + 0.45;
+        return total + 1;
+      }, 0);
+    }
+
+    function escapeHtml(text) {
+      return text.replace(/[&<>"']/g, char => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#039;"
+      })[char]);
+    }
+
+    function updateStats() {
+      els.score.textContent = state.score;
+      els.timer.textContent = state.seconds;
+      els.leftCount.textContent = Math.max(0, state.words.length - state.matchedIds.size);
+    }
+
+    function startGame(newRound = true) {
+      clearInterval(state.timerId);
+      clearTimeout(state.reviewTimerId);
+      if (newRound) prepareNewRound();
+      state.score = 0;
+      state.seconds = clamp(Number(els.timeInput.value) || 120, 10, 3600);
+      state.started = true;
+      state.selectedEnglish = null;
+      state.selectedChinese = null;
+      state.matchedIds = new Set();
+      showScreen("gameScreen");
+      renderBoard();
+      state.timerId = setInterval(() => {
+        state.seconds -= 1;
+        updateStats();
+        if (state.seconds <= 0) finishGame(false);
+      }, 1000);
+    }
+
+    function clamp(value, min, max) {
+      return Math.min(max, Math.max(min, value));
+    }
+
+    function finishGame(completed) {
+      clearInterval(state.timerId);
+      state.started = false;
+      els.summaryTitle.textContent = completed ? "太棒了！" : "时间到！";
+      els.finalScore.textContent = state.score;
+      if (completed) launchConfetti();
+      showScreen("summaryScreen");
+      if (completed) {
+        state.reviewTimerId = setTimeout(openReview, 3600);
+      }
+    }
+
+    function handleTileClick(event) {
+      const tile = event.target.closest(".tile");
+      if (!tile || tile.classList.contains("matched")) return;
+      if (!state.started) startGame(false);
+
+      const word = state.words.find(item => item.id === tile.dataset.id);
+      if (!word) return;
+      if (tile.dataset.type === "english") speak(word.english, "en-US");
+
+      if (tile.dataset.type === "english") {
+        if (state.selectedEnglish) state.selectedEnglish.classList.remove("selected");
+        state.selectedEnglish = tile;
+      } else {
+        if (state.selectedChinese) state.selectedChinese.classList.remove("selected");
+        state.selectedChinese = tile;
+      }
+
+      tile.classList.add("selected");
+      if (state.selectedEnglish && state.selectedChinese) checkPair();
+    }
+
+    function checkPair() {
+      const englishTile = state.selectedEnglish;
+      const chineseTile = state.selectedChinese;
+      const isMatch = englishTile.dataset.id === chineseTile.dataset.id;
+
+      if (isMatch) {
+        state.score += 10;
+        state.matchedIds.add(englishTile.dataset.id);
+        [englishTile, chineseTile].forEach(tile => {
+          tile.classList.remove("selected");
+          tile.classList.add("matched");
+        });
+        state.selectedEnglish = null;
+        state.selectedChinese = null;
+        updateStats();
+        if (state.matchedIds.size === state.words.length) {
+          setTimeout(() => finishGame(true), 420);
+        }
+        return;
+      }
+
+      state.score -= 5;
+      showWrong(englishTile, chineseTile);
+      updateStats();
+    }
+
+    function showWrong(englishTile, chineseTile) {
+      els.wrongFeedback.classList.remove("show");
+      void els.wrongFeedback.offsetWidth;
+      els.wrongFeedback.classList.add("show");
+      [englishTile, chineseTile].forEach(tile => tile.classList.add("wrong"));
+      setTimeout(() => {
+        [englishTile, chineseTile].forEach(tile => tile.classList.remove("selected", "wrong"));
+        state.selectedEnglish = null;
+        state.selectedChinese = null;
+      }, 520);
+    }
+
+    function launchConfetti() {
+      els.confetti.innerHTML = "";
+      const colors = ["#2f80ed", "#18a66a", "#ffd166", "#ff6f91", "#7952ff", "#48d6b5"];
+      for (let i = 0; i < 120; i++) {
+        const piece = document.createElement("i");
+        piece.style.left = Math.random() * 100 + "vw";
+        piece.style.background = colors[i % colors.length];
+        piece.style.animationDuration = 2.6 + Math.random() * 2.4 + "s";
+        piece.style.animationDelay = Math.random() * 0.35 + "s";
+        piece.style.transform = `rotate(${Math.random() * 180}deg)`;
+        els.confetti.appendChild(piece);
+      }
+      setTimeout(() => { els.confetti.innerHTML = ""; }, 5600);
+    }
+
+    function renderReview() {
+      const perPage = 5;
+      const totalPages = Math.max(1, Math.ceil(state.words.length / perPage));
+      state.reviewPage = clamp(state.reviewPage, 0, totalPages - 1);
+      const pageWords = state.words.slice(state.reviewPage * perPage, state.reviewPage * perPage + perPage);
+      els.reviewPageText.textContent = `第 ${state.reviewPage + 1} 页 / 共 ${totalPages} 页`;
+      els.reviewGrid.innerHTML = pageWords.length ? pageWords.map(word => `
+        <article class="word-card">
+          <h3 class="${textSizeClass(word.english, "english")}">${escapeHtml(word.english)}</h3>
+          <p class="cn ${textSizeClass(shortChineseMeaning(word.chinese))}" title="${escapeHtml(word.chinese)}">${escapeHtml(shortChineseMeaning(word.chinese))}</p>
+          <p class="sentence">${escapeHtml(word.example || makeExample(word))}</p>
+          <button class="btn" data-speak-review="${escapeHtml(word.english)}">播放发音</button>
+        </article>
+      `).join("") : `<p class="empty">还没有单词，请先导入单词库。</p>`;
+      els.prevPageBtn.disabled = state.reviewPage === 0;
+      els.nextPageBtn.disabled = state.reviewPage >= totalPages - 1;
+    }
+
+    function makeExample(word) {
+      return `I can say "${word.english}" in English.`;
+    }
+
+    function openReview() {
+      clearTimeout(state.reviewTimerId);
+      state.reviewPage = 0;
+      renderReview();
+      showScreen("reviewScreen");
+    }
+
+    function openImport() {
+      els.jsonInput.value = JSON.stringify(state.wordBank.map(({ english, chinese, example }) => ({ english, chinese, example })), null, 2);
+      els.importMessage.textContent = "";
+      els.importModal.classList.add("active");
+    }
+
+    function applyImportedJson() {
+      try {
+        const nextWords = parseWordsFromInput(els.jsonInput.value);
+        if (!nextWords.length) throw new Error("没有找到可用单词。");
+        state.wordBank = nextWords;
+        state.words = pickRoundWords(state.wordBank);
+        saveWords(state.wordBank);
+        state.reviewPage = 0;
+        els.importModal.classList.remove("active");
+        startGame();
+      } catch (error) {
+        els.importMessage.textContent = "单词库需要检查一下：" + error.message;
+      }
+    }
+
+    function parseWordsFromInput(text) {
+      const raw = text.trim();
+      if (!raw) return [];
+      if (raw.startsWith("[") || raw.startsWith("{")) {
+        const parsed = JSON.parse(raw);
+        return normalizeWords(Array.isArray(parsed) ? parsed : parsed.words);
+      }
+      return wordsFromPlainText(raw);
+    }
+
+    function wordsFromPlainText(text) {
+      const rows = text
+        .split(/\r?\n/)
+        .map(line => line.trim())
+        .filter(line => line && !/^english\s*[\t\-|,，、 ]+\s*(chinese|中文)/i.test(line));
+
+      return normalizeWords(rows.map(parseWordLine));
+    }
+
+    function parseWordLine(line) {
+      const parts = line.split(/\t+|\s*(?:--|—|–|-|：|:|,|，|\|)\s*/).map(part => part.trim()).filter(Boolean);
+      const english = findEnglish(parts) || (line.match(/[A-Za-z][A-Za-z' -]*/) || [""])[0].trim();
+      const chinese = findChinese(parts) || findChinese([line]);
+      const example = findExample(parts, english, chinese);
+
+      return {
+        english: cleanEnglish(english),
+        chinese: cleanChinese(chinese),
+        example: cleanExample(example)
+      };
+    }
+
+    function findEnglish(parts) {
+      const part = parts.find(item => /^[A-Za-z][A-Za-z' ]*$/.test(item) && !isPartOfSpeech(item));
+      return part || "";
+    }
+
+    function findChinese(parts) {
+      const part = parts.find(item => containsChinese(item));
+      if (!part) return "";
+      const match = part.match(/[\u3400-\u9fff][\u3400-\u9fff、，,;；（）()a-zA-Z. ]*/);
+      return match ? match[0] : part;
+    }
+
+    function findExample(parts, english, chinese) {
+      const candidates = parts.filter(item =>
+        item !== english
+        && item !== chinese
+        && !isPhonetic(item)
+        && !isPartOfSpeech(item)
+        && /[A-Za-z]{2,}/.test(item)
+        && item.split(/\s+/).length >= 3
+      );
+      return candidates[0] || "";
+    }
+
+    function cleanEnglish(text) {
+      return String(text || "")
+        .replace(/[()[\]{}]/g, " ")
+        .replace(/[^A-Za-z' -]/g, " ")
+        .replace(/\s+/g, " ")
+        .trim();
+    }
+
+    function cleanChinese(text) {
+      return String(text || "")
+        .replace(/\/[^/]+\/|\[[^\]]+\]|\([^)]*音[^)]*\)/g, " ")
+        .replace(/\b(?:n|v|adj|adv|prep|conj|pron|num|art|interj|vt|vi)\.?\b/gi, " ")
+        .replace(/\s+/g, " ")
+        .trim();
+    }
+
+    function cleanExample(text) {
+      return String(text || "").replace(/\s+/g, " ").trim();
+    }
+
+    function containsChinese(text) {
+      return /[\u3400-\u9fff]/.test(text);
+    }
+
+    function isPhonetic(text) {
+      return /[ˈˌəɪʊɔæɑɒɛɜθðʃʒŋː]|^\/.*\/$|^\[.*\]$/.test(text);
+    }
+
+    function isPartOfSpeech(text) {
+      return /^(n|v|adj|adv|prep|conj|pron|num|art|interj|vt|vi)\.?$/i.test(String(text || "").trim());
+    }
+
+    async function wordsFromDocx(file) {
+      const zip = await readZipEntries(await file.arrayBuffer());
+      const documentXml = zip["word/document.xml"];
+      if (!documentXml) throw new Error("这个文件不像标准 .docx 文档。请用 Word 另存为 .docx 后再试。");
+      return wordsFromPlainText(extractTextFromDocumentXml(documentXml));
+    }
+
+    async function wordsFromPdf(file) {
+      const pdfjsLib = await loadPdfJs();
+      const pdf = await pdfjsLib.getDocument({ data: new Uint8Array(await file.arrayBuffer()) }).promise;
+      const pages = [];
+
+      for (let pageNumber = 1; pageNumber <= pdf.numPages; pageNumber++) {
+        const page = await pdf.getPage(pageNumber);
+        const content = await page.getTextContent();
+        pages.push(textLinesFromPdfItems(content.items).join("\n"));
+      }
+
+      return wordsFromPlainText(pages.join("\n"));
+    }
+
+    function loadPdfJs() {
+      if (window.pdfjsLib) {
+        window.pdfjsLib.GlobalWorkerOptions.workerSrc = PDF_WORKER_URL;
+        return Promise.resolve(window.pdfjsLib);
+      }
+
+      return new Promise((resolve, reject) => {
+        const script = document.createElement("script");
+        script.src = PDF_JS_URL;
+        script.async = true;
+        script.onload = () => {
+          if (!window.pdfjsLib) {
+            reject(new Error("PDF 读取组件加载失败，请检查网络后重试。"));
+            return;
+          }
+          window.pdfjsLib.GlobalWorkerOptions.workerSrc = PDF_WORKER_URL;
+          resolve(window.pdfjsLib);
+        };
+        script.onerror = () => reject(new Error("PDF 读取组件需要联网加载。请连接网络后重试，或先把 PDF 内容复制成 TXT 导入。"));
+        document.head.appendChild(script);
+      });
+    }
+
+    function textLinesFromPdfItems(items) {
+      const positioned = items
+        .map(item => ({
+          text: String(item.str || "").trim(),
+          x: item.transform ? item.transform[4] : 0,
+          y: item.transform ? item.transform[5] : 0
+        }))
+        .filter(item => item.text);
+
+      positioned.sort((a, b) => Math.abs(b.y - a.y) > 3 ? b.y - a.y : a.x - b.x);
+
+      const lines = [];
+      positioned.forEach(item => {
+        const line = lines.find(candidate => Math.abs(candidate.y - item.y) <= 3);
+        if (line) {
+          line.items.push(item);
+          line.y = (line.y + item.y) / 2;
+        } else {
+          lines.push({ y: item.y, items: [item] });
+        }
+      });
+
+      return lines.map(line => line.items
+        .sort((a, b) => a.x - b.x)
+        .map(item => item.text)
+        .join(" ")
+        .replace(/\s+/g, " ")
+        .trim()
+      ).filter(Boolean);
+    }
+
+    async function readZipEntries(buffer) {
+      const bytes = new Uint8Array(buffer);
+      const view = new DataView(buffer);
+      const eocdOffset = findEndOfCentralDirectory(view);
+      if (eocdOffset < 0) throw new Error("无法读取 .docx，请确认文件没有损坏。");
+
+      const entryCount = view.getUint16(eocdOffset + 10, true);
+      let centralOffset = view.getUint32(eocdOffset + 16, true);
+      const entries = {};
+
+      for (let i = 0; i < entryCount; i++) {
+        if (view.getUint32(centralOffset, true) !== 0x02014b50) break;
+        const method = view.getUint16(centralOffset + 10, true);
+        const compressedSize = view.getUint32(centralOffset + 20, true);
+        const fileNameLength = view.getUint16(centralOffset + 28, true);
+        const extraLength = view.getUint16(centralOffset + 30, true);
+        const commentLength = view.getUint16(centralOffset + 32, true);
+        const localOffset = view.getUint32(centralOffset + 42, true);
+        const fileName = decodeBytes(bytes.slice(centralOffset + 46, centralOffset + 46 + fileNameLength));
+        const localNameLength = view.getUint16(localOffset + 26, true);
+        const localExtraLength = view.getUint16(localOffset + 28, true);
+        const dataStart = localOffset + 30 + localNameLength + localExtraLength;
+        const compressedData = bytes.slice(dataStart, dataStart + compressedSize);
+
+        if (fileName === "word/document.xml") {
+          const data = method === 0 ? compressedData : await inflateRaw(compressedData);
+          entries[fileName] = decodeBytes(data);
+          break;
+        }
+
+        centralOffset += 46 + fileNameLength + extraLength + commentLength;
+      }
+
+      return entries;
+    }
+
+    function findEndOfCentralDirectory(view) {
+      const minOffset = Math.max(0, view.byteLength - 65557);
+      for (let offset = view.byteLength - 22; offset >= minOffset; offset--) {
+        if (view.getUint32(offset, true) === 0x06054b50) return offset;
+      }
+      return -1;
+    }
+
+    async function inflateRaw(data) {
+      if (!("DecompressionStream" in window)) {
+        throw new Error("当前浏览器不支持直接读取 .docx，请换用新版 Chrome、Edge 或 Safari。");
+      }
+      const stream = new Blob([data]).stream().pipeThrough(new DecompressionStream("deflate-raw"));
+      return new Uint8Array(await new Response(stream).arrayBuffer());
+    }
+
+    function decodeBytes(bytes) {
+      return new TextDecoder("utf-8").decode(bytes);
+    }
+
+    function extractTextFromDocumentXml(xmlText) {
+      const parser = new DOMParser();
+      const xml = parser.parseFromString(xmlText, "application/xml");
+      const lines = [];
+      const tables = Array.from(xml.getElementsByTagName("w:tbl"));
+
+      tables.forEach(table => {
+        Array.from(table.getElementsByTagName("w:tr")).forEach(row => {
+          const cells = Array.from(row.getElementsByTagName("w:tc"))
+            .map(cell => textFromXmlNode(cell).trim())
+            .filter(Boolean);
+          if (cells.length >= 2) lines.push(cells.join("\t"));
+        });
+      });
+
+      Array.from(xml.getElementsByTagName("w:p")).forEach(paragraph => {
+        if (hasAncestor(paragraph, "tbl")) return;
+        const text = textFromXmlNode(paragraph).trim();
+        if (text) lines.push(text);
+      });
+
+      return lines.join("\n");
+    }
+
+    function textFromXmlNode(node) {
+      const pieces = [];
+      Array.from(node.childNodes).forEach(child => collectTextPieces(child, pieces));
+      return pieces.join("").replace(/\s+/g, " ").trim();
+    }
+
+    function collectTextPieces(node, pieces) {
+      if (node.nodeType !== 1) return;
+      if (node.localName === "t") pieces.push(node.textContent || "");
+      if (node.localName === "tab") pieces.push("\t");
+      if (node.localName === "br") pieces.push("\n");
+      Array.from(node.childNodes).forEach(child => collectTextPieces(child, pieces));
+    }
+
+    function hasAncestor(node, localName) {
+      let current = node.parentNode;
+      while (current) {
+        if (current.localName === localName) return true;
+        current = current.parentNode;
+      }
+      return false;
+    }
+
+    function reshuffleOnly() {
+      const currentScore = state.score;
+      const currentSeconds = state.seconds;
+      renderBoard();
+      state.score = currentScore;
+      state.seconds = currentSeconds;
+      state.matchedIds.forEach(id => {
+        document.querySelectorAll(`.tile[data-id="${CSS.escape(id)}"]`).forEach(tile => tile.classList.add("matched"));
+      });
+      updateStats();
+    }
+
+    els.startBtn.addEventListener("click", startGame);
+    els.playAgainBtn.addEventListener("click", startGame);
+    els.importBtn.addEventListener("click", openImport);
+    els.exportBtn.addEventListener("click", downloadShareHtml);
+    els.closeModalBtn.addEventListener("click", () => els.importModal.classList.remove("active"));
+    els.applyJsonBtn.addEventListener("click", applyImportedJson);
+    els.loadFileBtn.addEventListener("click", () => els.fileInput.click());
+    els.reviewBtn.addEventListener("click", openReview);
+    els.summaryReviewBtn.addEventListener("click", openReview);
+    els.nextRoundBtn.addEventListener("click", startGame);
+    els.backGameBtn.addEventListener("click", () => showScreen("gameScreen"));
+    els.shuffleBtn.addEventListener("click", reshuffleOnly);
+    els.soundBtn.addEventListener("click", () => {
+      state.soundOn = !state.soundOn;
+      els.soundBtn.textContent = state.soundOn ? "发音：开" : "发音：关";
+      if (!state.soundOn && "speechSynthesis" in window) window.speechSynthesis.cancel();
+    });
+    els.prevPageBtn.addEventListener("click", () => {
+      state.reviewPage -= 1;
+      renderReview();
+    });
+    els.nextPageBtn.addEventListener("click", () => {
+      state.reviewPage += 1;
+      renderReview();
+    });
+    els.englishGrid.addEventListener("click", handleTileClick);
+    els.chineseGrid.addEventListener("click", handleTileClick);
+    els.reviewGrid.addEventListener("click", event => {
+      const button = event.target.closest("[data-speak-review]");
+      if (button) speak(button.dataset.speakReview, "en-US");
+    });
+    els.fileInput.addEventListener("change", async event => {
+      const file = event.target.files[0];
+      if (!file) return;
+      els.importMessage.textContent = "正在读取文件...";
+      try {
+        const lowerName = file.name.toLowerCase();
+        let importedWords;
+        if (lowerName.endsWith(".pdf") || file.type === "application/pdf") {
+          els.importMessage.textContent = "正在读取 PDF 文字...";
+          importedWords = await wordsFromPdf(file);
+        } else if (lowerName.endsWith(".docx")) {
+          importedWords = await wordsFromDocx(file);
+        } else {
+          importedWords = parseWordsFromInput(await file.text());
+        }
+        if (!importedWords.length) throw new Error("没有识别到单词。请按“英文 - 中文 - 例句”或表格三列整理。");
+        els.jsonInput.value = JSON.stringify(importedWords.map(({ english, chinese, example }) => ({ english, chinese, example })), null, 2);
+        els.importMessage.textContent = `已识别 ${importedWords.length} 个单词。每轮最多随机抽取 ${ROUND_SIZE} 个，点击“应用当前内容”即可开始。`;
+      } catch (error) {
+        els.importMessage.textContent = "读取失败：" + error.message;
+      } finally {
+        els.fileInput.value = "";
+      }
+    });
+    els.importModal.addEventListener("click", event => {
+      if (event.target === els.importModal) els.importModal.classList.remove("active");
+    });
+
+    renderBoard();
+  </script>
+
+
+</body></html>
